@@ -19,12 +19,10 @@ from django.urls import path
 from bMSapp import views
 
 urlpatterns = [
-    path('', views.user_login, name='login'),
     path('admin/', admin.site.urls),
     path('whiteboard/', views.whiteboard, name='whiteboard'),
     path('register/', views.register, name='register'),
-    path('login/', views.user_login, name='login'),
-    path('logout/', views.user_logout, name='logout'),
+    path('login/', views.login, name='login'),
     path('players/', views.player_list, name='player_list'),
     path('player/create/', views.player_create, name='player_create'),
     path('player/update/<int:pk>/', views.player_update, name='player_update'),
@@ -36,3 +34,5 @@ urlpatterns = [
     path('login/', views.login),
 
 ]
+
+
