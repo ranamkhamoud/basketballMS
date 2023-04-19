@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Coaches</h2>
+  <a href="{% url 'coach_create' %}">Add New Coach</a>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Team</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for coach in coaches %}
+        <tr>
+          <td>{{ coach.profile.user.get_full_name }}</td>
+          <td>{{ coach.team }}</td>
+          <td>
+            <a href="{% url 'coach_update' coach.pk %}">Edit</a>
+            <a href="{% url 'coach_delete' coach.pk %}">Delete</a>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
