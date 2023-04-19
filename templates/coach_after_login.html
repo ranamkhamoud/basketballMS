@@ -1,0 +1,38 @@
+{% extends 'base.html' %} {% block content %}
+<h2><a href="/whiteboard"> GO TO WHITEBOARD</a></h2>
+<div class="manager-container">
+  <div class="player-table">
+    <h2>Players</h2>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Position</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for player in players %}
+        <tr>
+          <td>{{ player.profile.user.get_full_name }}</td>
+
+          {% if player.position %}
+          <td>{{ player.position }}</td>
+
+          {%else%} {% endif %}
+          <td>NaN</td>
+
+          <td>
+            <a
+              href="{% url 'edit_player_profile' player.profile.user.username %}"
+              >Edit</a
+            >
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}

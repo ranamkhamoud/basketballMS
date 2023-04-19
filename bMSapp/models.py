@@ -12,8 +12,18 @@ class Profile(models.Model):
 
 
 class Player(models.Model):
+
+    position_choices = [
+        ('PG', 'Point Guard'),
+        ('SG', 'Shooting Guard'),
+        ('SF', 'Small Forward'),
+        ('PF', 'Power Forward'),
+        ('C', 'Center'),
+
+    ]
+
     profile = models.OneToOneField(Profile, on_delete=models.CASCADE)
-    position = models.CharField(max_length=50)
+    position = models.CharField(max_length=50, choices=position_choices)
     # team = models.CharField(max_length=50)
 
     def __str__(self):

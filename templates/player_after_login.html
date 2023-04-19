@@ -1,0 +1,19 @@
+{% extends 'base.html' %} {% block content %}
+
+<div class="player-profile">
+  <ul class="player-information-list">
+    <li>First Name: {{player.profile.user.first_name}}</li>
+    <li>Last Name: {{player.profile.user.last_name}}</li>
+    <li>Username: {{player.profile.user.username}}</li>
+    <li>Email: {{player.profile.user.email}}</li>
+    <li>DOB: {{player.profile.date_of_birth}}</li>
+    <li>Phone number: {{player.profile.phone_number}}</li>
+    {% if player.position %}
+    <li>Position: {{player.position}}</li>
+    {% else %}
+    <li>Position: Not specified yet</li>
+    {% endif %}
+  </ul>
+</div>
+
+{% endblock %}

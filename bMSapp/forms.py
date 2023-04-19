@@ -51,10 +51,17 @@ class ProfileForm(forms.ModelForm):
         fields = ['phone_number', 'date_of_birth']
 
 
-class PlayerForm(forms.ModelForm):
+class UserEditForm(forms.ModelForm):
+    class Meta:
+        model = User
+        exclude = ["password", "last_login", "is_superuser", "is_staff",
+                   "is_active", "date_joined", "groups", "user_permissions"]
+
+
+class PlayerEditForm(forms.ModelForm):
     class Meta:
         model = Player
-        fields = ['profile', 'position']
+        exclude = ["profile"]
 
 
 class CoachForm(forms.ModelForm):

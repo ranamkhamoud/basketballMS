@@ -1,0 +1,67 @@
+{% extends 'base.html' %} {% block content %} {% comment %}
+<h1 class="welcome-title">Welcome {{manager.profile.user.get_full_name}}</h1>
+{% endcomment %}
+
+<div class="manager-container">
+  <div class="player-table">
+    <h2>Players</h2>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Position</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for player in players %}
+        <tr>
+          <td>{{ player.profile.user.get_full_name }}</td>
+
+          {% if player.position %}
+          <td>{{ player.position }}</td>
+
+          {%else%}
+          <td>NaN</td>
+          {% endif %}
+
+          <td>
+            <a
+              href="{% url 'edit_player_profile' player.profile.user.username %}"
+              >Edit</a
+            >
+            <a href={% url 'delete_player_profile' player.profile.user.username %}>Delete</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="coach-table">
+    <h2>Coaches</h2>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for coach in coaches %}
+        <tr>
+          <td>{{ coach.profile.user.get_full_name }}</td>
+
+          <td>
+            <a
+              href="{% url 'edit_coach_profile' coach.profile.user.username %}"
+              >Edit</a
+            >
+            <a href=  {% url 'delete_coach_profile' coach.profile.user.username %}>Delete</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
