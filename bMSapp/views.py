@@ -1,9 +1,7 @@
 from django.shortcuts import render, redirect
-from .models import Player, Coach, Manager, Profile
-from .forms import CoachForm, UserForm, ProfileForm, UserEditForm, PlayerEditForm
-from django.contrib.auth.models import User, Group, Permission
-from .forms import UserCreationForm
-from django.contrib.auth.decorators import login_required
+from .models import Player, Coach, Manager
+from .forms import  UserForm, ProfileForm, UserEditForm, PlayerEditForm
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
@@ -125,4 +123,5 @@ def delete_coach_profile(request, username):
     coach = Coach.objects.get(profile__user__username=username)
     coach.profile.user.delete()
     coach.delete()
-    return redirect('coach_list')
+    return redirect('manager_after_login')
+

@@ -2,7 +2,6 @@ from django import forms
 from .models import Player, Coach
 from django.contrib.auth.forms import UserCreationForm
 from .models import Profile
-from . import models
 from django.contrib.auth.models import User
 
 

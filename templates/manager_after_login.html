@@ -1,67 +1,156 @@
-{% extends 'base.html' %} {% block content %} {% comment %}
-<h1 class="welcome-title">Welcome {{manager.profile.user.get_full_name}}</h1>
-{% endcomment %}
+{% extends 'base.html' %} {% block content %} 
 
-<div class="manager-container">
-  <div class="player-table">
-    <h2>Players</h2>
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Position</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for player in players %}
-        <tr>
-          <td>{{ player.profile.user.get_full_name }}</td>
+<main class="content">
+  <div class="container-fluid p-0">
 
-          {% if player.position %}
-          <td>{{ player.position }}</td>
+    <h1 class="h3 mb-3"><strong>Manager's</strong> Dashboard</h1>
 
-          {%else%}
-          <td>NaN</td>
-          {% endif %}
+<div class="row">
+  <div class="col-12 col-lg-8 col-xxl-9 d-flex">
+    <div class="card flex-fill">
+      <div class="card-header">
 
-          <td>
-            <a
-              href="{% url 'edit_player_profile' player.profile.user.username %}"
-              >Edit</a
-            >
-            <a href={% url 'delete_player_profile' player.profile.user.username %}>Delete</a>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+        <h5 class="card-title mb-0">Coach List</h5>
+      </div>
+      <table class="table table-hover my-0">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th class="d-none d-xl-table-cell">Email</th>
+            <th class="d-none d-xl-table-cell"></th>
+            <th>Edit</th>
+            <th class="d-none d-md-table-cell">Delete</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for coach in coaches %}
+          <tr>
+            <td>{{ coach.profile.user.get_full_name }}</td>
+            <td class="d-none d-xl-table-cell">{{ coach.profile.user.get_email }}</td>
+            <td class="d-none d-xl-table-cell"></td>
+            <td>
+              <a href="{% url 'edit_coach_profile' coach.profile.user.username %}">
+                <button class="btn btn-info">Edit</button>
+              </a>
+            </td>
+            <td class="d-none d-md-table-cell">
+              <form action="{% url 'delete_coach_profile' coach.profile.user.username %}" method="post">
+                {% csrf_token %}
+                <button class="btn btn-danger" type="submit">Delete</button>
+              </form>
+            </td>
+            
+            {% endfor %}
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
-  <div class="coach-table">
-    <h2>Coaches</h2>
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for coach in coaches %}
-        <tr>
-          <td>{{ coach.profile.user.get_full_name }}</td>
+  <div class="col-12 col-lg-4 col-xxl-3 d-flex">
+    <div class="card flex-fill w-100">
+      <div class="card-header">
 
-          <td>
-            <a
-              href="{% url 'edit_coach_profile' coach.profile.user.username %}"
-              >Edit</a
-            >
-            <a href=  {% url 'delete_coach_profile' coach.profile.user.username %}>Delete</a>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+        <h5 class="card-title mb-0">Payments</h5>
+      </div>
+      <div class="card-body d-flex w-100">
+        <div class="align-self-center chart chart-lg">
+          <canvas id="chartjs-dashboard-bar"></canvas>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
+
+<div class="row">
+  <div class="col-12 col-lg-8 col-xxl-9 d-flex">
+    <div class="card flex-fill">
+      <div class="card-header">
+
+        <h5 class="card-title mb-0">Player List</h5>
+      </div>
+      <table class="table table-hover my-0">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th class="d-none d-xl-table-cell">Position</th>
+            <th class="d-none d-xl-table-cell">Email</th>
+            <th>Edit</th>
+            <th class="d-none d-md-table-cell">Delete</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for player in players %}
+          <tr>
+            <td>{{ player.profile.user.get_full_name }}</td>
+            {% if player.position %}
+            <td class="d-none d-xl-table-cell">{{ player.position }}</td>
+            {% else %}
+            <td class="d-none d-xl-table-cell">NaN</td>
+            {% endif %}
+            <td class="d-none d-xl-table-cell">{{ player.profile.user.email }}</td>
+            <td>
+              <a href="{% url 'edit_player_profile' player.profile.user.username %}">
+                <button class="btn btn-info">Edit</button>
+              </a>
+            </td>
+            <td class="d-none d-md-table-cell">
+              <a href="{% url 'delete_player_profile' player.profile.user.username %}" method="post">
+                {% csrf_token %}
+                <button class="btn btn-danger" type="submit">Delete</button>
+              </form>
+            </td>
+            
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      
+    </div>
+  </div>
+  <div class="col-12 col-lg-4 col-xxl-3 d-flex">
+    <div class="card flex-fill w-100">
+      <div class="card-header">
+
+        <h5 class="card-title mb-0">Notifications</h5>
+      </div>
+      <div class="card-body d-flex w-100">
+        <div class="align-self-center chart chart-lg">
+          <canvas id="chartjs-dashboard-bar"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-12 col-lg-8 col-xxl-9 d-flex">
+    <div class="card flex-fill">
+      <div class="card-header">
+
+        <h5 class="card-title mb-0">Calendar</h5>
+      </div>
+      <div class="card-body d-flex">
+        <div class="align-self-center w-100">
+          <div class="chart">
+            <div id="datetimepicker-dashboard"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+		document.addEventListener("DOMContentLoaded", function() {
+			var date = new Date(Date.now() - 5 * 24 * 60 * 60 * 1000);
+			var defaultDate = date.getUTCFullYear() + "-" + (date.getUTCMonth() + 1) + "-" + date.getUTCDate();
+			document.getElementById("datetimepicker-dashboard").flatpickr({
+				inline: true,
+				prevArrow: "<span title=\"Previous month\">&laquo;</span>",
+				nextArrow: "<span title=\"Next month\">&raquo;</span>",
+				defaultDate: defaultDate
+			});
+		});
+	</script>
+</div>
+</main>
+
 {% endblock %}
