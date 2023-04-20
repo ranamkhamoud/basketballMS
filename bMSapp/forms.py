@@ -1,53 +1,69 @@
 from django import forms
-from .models import Player,Coach
+from .models import Player, Coach
 from django.contrib.auth.forms import UserCreationForm
 from .models import Profile
-from . import models
+from django.contrib.auth.models import User
 
 
-class UserCreationForm(UserCreationForm):
+class UserForm(UserCreationForm):
+    first_name = forms.CharField(
+        max_length=30, required=True, help_text='Required.')
+    last_name = forms.CharField(
+        max_length=30, required=True, help_text='Required.')
+    email = forms.EmailField(
+        max_length=254, help_text='Required. Enter a valid email address.')
+
     password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
-    password2 = forms.CharField(label='Confirm Password', widget=forms.PasswordInput)
+    password2 = forms.CharField(
+        label='Confirm Password', widget=forms.PasswordInput)
 
-    class Meta(UserCreationForm.Meta):
-        model = Profile
-        fields = UserCreationForm.Meta.fields + ('email', 'phone_number', 'date_of_birth', 'is_player', 'is_coach', 'is_manager')
+    class Meta:
+        model = User
+        fields = ('username', 'first_name', 'last_name',
+                  'email')
 
     def clean(self):
         cleaned_data = super().clean()
         password1 = cleaned_data.get('password1')
         password2 = cleaned_data.get('password2')
-        is_player = cleaned_data.get('is_player')
-        is_coach = cleaned_data.get('is_coach')
-        is_manager = cleaned_data.get('is_manager')
 
-        if not any([is_player, is_coach, is_manager]):
-            raise forms.ValidationError("Please select at least one role (Player, Coach, or Manager).")
-
-        if password1 and password2:
-            if password1 != password2:
-                raise forms.ValidationError("Passwords do not match.")
+        if password1 != password2:
+            raise forms.ValidationError("Passwords do not match.")
 
 
-class PlayerForm(forms.ModelForm):
+class ProfileForm(forms.ModelForm):
+    ROLE_CHOICES = (
+        ('P', 'Player'),
+        ('C', 'Coach'),
+        ('M', 'Manager'),
+    )
+
+    role = forms.ChoiceField(choices=ROLE_CHOICES, widget=forms.RadioSelect,
+                             required=True, initial='P', help_text='Required.')
+
+    phone_number = forms.CharField(max_length=20)
+    date_of_birth = forms.DateField(
+        widget=forms.DateInput(attrs={'type': 'date'}))
+
+    class Meta:
+        model = Profile
+        fields = ['phone_number', 'date_of_birth']
+
+
+class UserEditForm(forms.ModelForm):
+    class Meta:
+        model = User
+        exclude = ["password", "last_login", "is_superuser", "is_staff",
+                   "is_active", "date_joined", "groups", "user_permissions"]
+
+
+class PlayerEditForm(forms.ModelForm):
     class Meta:
         model = Player
-        fields = ['profile', 'position', 'team']
+        exclude = ["profile"]
+
 
 class CoachForm(forms.ModelForm):
     class Meta:
         model = Coach
-        fields = ['profile', 'team']
-
-class LoginForm(forms.ModelForm):
-
-    password = forms.CharField(widget=forms.PasswordInput)
-
-    class Meta:
-        model = models.User
-        fields = ['username', 'password']
-
-        labels = {
-            'username': 'Username',
-            'password': 'Password',
-        }
+        fields = ['profile']

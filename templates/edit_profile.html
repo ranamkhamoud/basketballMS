@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block content %}
+<main class="d-flex w-100">
+    <div class="container d-flex flex-column">
+        <div class="row vh-100">
+            <div class="col-sm-10 col-md-8 col-lg-6 mx-auto d-table h-100">
+                <div class="d-table-cell align-middle">
+
+                <div class="text-center mt-4">
+                    <h1 class="h2"></h1>
+                    <p class="lead">
+                        
+                    </p>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="m-sm-4">
+                            <form method="post">
+                                {% csrf_token %}
+                                
+                                <div class="mb-3">
+                                    <label class="form-label" for="{{ form.username.id_for_label }}">Username*</label>
+                                    <input class="form-control form-control-lg" type="text" name="{{ form.username.name }}" placeholder="Enter your username" value="{{ form.username.value|default:'' }}" required />
+                                    {{ form.username.errors }}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label" for="{{ form.first_name.id_for_label }}">First name</label>
+                                    <input class="form-control form-control-lg" type="text" name="{{ form.first_name.name }}" placeholder="Enter your first name" value="{{ form.first_name.value|default:'' }}" />
+                                    {{ form.first_name.errors }}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label" for="{{ form.last_name.id_for_label }}">Last name</label>
+                                    <input class="form-control form-control-lg" type="text" name="{{ form.last_name.name }}" placeholder="Enter your last name" value="{{ form.last_name.value|default:'' }}" />
+                                    {{ form.last_name.errors }}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label" for="{{ form.email.id_for_label }}">Email address</label>
+                                    <input class="form-control form-control-lg" type="email" name="{{ form.email.name }}" placeholder="Enter your email address" value="{{ form.email.value|default:'' }}" />
+                                    {{ form.email.errors }}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label" for="{{ player_form.position.id_for_label }}">Position</label>
+                                    <select class="form-select mb-3" name="{{ player_form.position.name }}" id="{{ player_form.position.auto_id }}">
+                                        {% for position in player_form.position %}
+                                            <option value="{{ position.data.value }}" {% if position.data.selected %}selected{% endif %}>{{ position.choice_label }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    {{ player_form.position.errors }}
+                                </div>
+                                
+                                <div class="text-center mt-3">
+                                    <button type="submit" class="btn btn-lg btn-primary">Save</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+</main>
+{% endblock %}

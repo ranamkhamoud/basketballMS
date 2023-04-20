@@ -19,19 +19,25 @@ from django.urls import path
 from bMSapp import views
 
 urlpatterns = [
+    path('', views.user_login, name='login'),
     path('admin/', admin.site.urls),
     path('whiteboard/', views.whiteboard, name='whiteboard'),
     path('register/', views.register, name='register'),
-    path('login/', views.login, name='login'),
-    path('players/', views.player_list, name='player_list'),
-    path('player/create/', views.player_create, name='player_create'),
-    path('player/update/<int:pk>/', views.player_update, name='player_update'),
-    path('player/delete/<int:pk>/', views.player_delete, name='player_delete'),
-    path('coaches/', views.coach_list, name='coach_list'),
-    path('coach/create/', views.coach_create, name='coach_create'),
-    path('coach/update/<int:pk>/', views.coach_update, name='coach_update'),
-    path('coach/delete/<int:pk>/', views.coach_delete, name='coach_delete'),
-    path('login/', views.login),
+    path('login/', views.user_login, name='login'),
+    path('logout/', views.user_logout, name='logout'),
+    path('player/', views.player_after_login, name='player_after_login'),
+    path('coach/', views.coach_after_login, name='coach_after_login'),
+    path('manager/', views.manager_after_login, name='manager_after_login'),
+    path('edit_player_profile/<str:username>/',
+         views.edit_player_profile, name='edit_player_profile'),
+    path('edit_coach_profile/<str:username>/',
+         views.edit_coach_profile, name='edit_coach_profile'),
+    path('delete_player_profile/<str:username>/',
+         views.delete_player_profile, name='delete_player_profile'),
+    path('delete_coach_profile/<str:username>/',
+         views.delete_coach_profile, name='delete_coach_profile'),
+
+
 
 ]
 

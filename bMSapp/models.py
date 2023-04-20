@@ -1,10 +1,9 @@
 from django.contrib.auth.models import User
 from django.db import models
 
-class Profile(User):
-    is_player = models.BooleanField(default=False)
-    is_coach = models.BooleanField(default=False)
-    is_manager = models.BooleanField(default=False)
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     phone_number = models.CharField(max_length=15)
     date_of_birth = models.DateField()
 
@@ -13,28 +12,38 @@ class Profile(User):
 
 
 class Player(models.Model):
+
+    position_choices = [
+        ('PG', 'Point Guard'),
+        ('SG', 'Shooting Guard'),
+        ('SF', 'Small Forward'),
+        ('PF', 'Power Forward'),
+        ('C', 'Center'),
+
+    ]
+
     profile = models.OneToOneField(Profile, on_delete=models.CASCADE)
-    position = models.CharField(max_length=50)
-    team = models.CharField(max_length=50)
+    position = models.CharField(max_length=50, choices=position_choices)
+    # team = models.CharField(max_length=50)
 
     def __str__(self):
         return f"{self.profile.user.first_name} {self.profile.user.last_name}"
+
 
 class Coach(models.Model):
     profile = models.OneToOneField(Profile, on_delete=models.CASCADE)
-    team = models.CharField(max_length=50)
+    # team = models.CharField(max_length=50)
 
     def __str__(self):
         return f"{self.profile.user.first_name} {self.profile.user.last_name}"
+
 
 class Manager(models.Model):
     profile = models.OneToOneField(Profile, on_delete=models.CASCADE)
-    team = models.CharField(max_length=50)
+    # team = models.CharField(max_length=50)
 
     def __str__(self):
         return f"{self.profile.user.first_name} {self.profile.user.last_name}"
-
-
 
 
 # class Schedule(models.Model):
@@ -109,5 +118,3 @@ class Manager(models.Model):
 
 # def __str__(self):
 #     return f'{self.user} - {self.action} - {self.timestamp}'
-
-
