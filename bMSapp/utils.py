@@ -1,7 +1,13 @@
 
 from django.contrib.auth.models import User, Group
-from .models import Player, Coach, Manager, Profile
+from .models import *
 from django.shortcuts import render, redirect
+
+
+def create_notification(owner, user, message):
+    notification = Notification.objects.create(
+        owner=owner, profile=user, message=message)
+    notification.save()
 
 
 def create_profile(user_form, profile_form):
@@ -22,23 +28,22 @@ def create_profile(user_form, profile_form):
 
         group = Group.objects.get_or_create(name='Players')[0]
         user.groups.add(group)
-
-        profile = Player(profile=profile)
-
-        profile.save()
-        print("saved player")
+        player = Player(profile=profile)
+        player.save()
+        create_notification(player.profile, player.profile,
+                            'has joined the team!')
     elif role == 'C':
         group = Group.objects.get_or_create(name='Coaches')[0]
         user.groups.add(group)
 
-        profile = Coach(profile=profile)
-        profile.save()
+        coach = Coach(profile=profile)
+        coach.save()
     elif role == 'M':
         group = Group.objects.get_or_create(name='Managers')[0]
         user.groups.add(group)
 
-        profile = Manager(profile=profile)
-        profile.save()
+        manager = Manager(profile=profile)
+        manager.save()
     return user
 
 

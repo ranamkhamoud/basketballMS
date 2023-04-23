@@ -97,7 +97,7 @@
               <a href="{% url 'delete_player_profile' player.profile.user.username %}" method="post">
                 {% csrf_token %}
                 <button class="btn btn-danger" type="submit">Delete</button>
-              </form>
+            
             </td>
             
           </tr>
@@ -115,7 +115,10 @@
       </div>
       <div class="card-body d-flex w-100">
         <div class="align-self-center chart chart-lg">
-          <canvas id="chartjs-dashboard-bar"></canvas>
+          <ul class="manager-notifications">
+            {% for notification in notifications %}
+            <li>{{notification}}</li>
+            {% endfor %}
         </div>
       </div>
     </div>

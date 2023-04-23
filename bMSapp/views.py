@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
-from .models import Player, Coach, Manager
-from .forms import  UserForm, ProfileForm, UserEditForm, PlayerEditForm
+from .models import *
+from .forms import UserForm, ProfileForm, UserEditForm, PlayerEditForm
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -74,8 +74,9 @@ def manager_after_login(request):
 
     all_players = Player.objects.all()
     all_coaches = Coach.objects.all()
+    all_notifications = Notification.objects.all().order_by('-created_at')
 
-    return render(request, 'manager_after_login.html', {'manager': current_manager, 'players': all_players, 'coaches': all_coaches})
+    return render(request, 'manager_after_login.html', {'manager': current_manager, 'players': all_players, 'coaches': all_coaches, 'notifications': all_notifications})
 
 
 @login_required
@@ -124,4 +125,3 @@ def delete_coach_profile(request, username):
     coach.profile.user.delete()
     coach.delete()
     return redirect('manager_after_login')
-

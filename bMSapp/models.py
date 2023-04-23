@@ -46,6 +46,21 @@ class Manager(models.Model):
         return f"{self.profile.user.first_name} {self.profile.user.last_name}"
 
 
+class Notification(models.Model):
+    owner = models.ForeignKey(
+        Profile, related_name='notifications_owned', on_delete=models.CASCADE)
+    profile = models.ForeignKey(
+        Profile, related_name='notifications', on_delete=models.CASCADE)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.created_at.strftime(' %Y-%m-%d %H: %M: %S')} - {self.profile.user.username}: {self.message}"
+
+
 # class Schedule(models.Model):
 #     team = models.ForeignKey(Team, on_delete=models.CASCADE)
 #     event_type = models.CharField(max_length=50)
