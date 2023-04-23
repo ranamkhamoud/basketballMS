@@ -2,6 +2,15 @@
 from django.contrib.auth.models import User, Group
 from .models import *
 from django.shortcuts import render, redirect
+import threading
+from django.conf import settings
+from django.core.mail import EmailMultiAlternatives, get_connection
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from six import text_type
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.contrib.sites.shortcuts import get_current_site
+from django.urls import reverse
+from django.utils.encoding import force_bytes
 
 
 def create_notification(owner, user, message):
@@ -10,7 +19,7 @@ def create_notification(owner, user, message):
     notification.save()
 
 
-def create_profile(user_form, profile_form):
+def create_profile(request, user_form, profile_form):
     # I'm sure there is a better way to do this (maybe kwargs? custom form?)
     username = user_form.cleaned_data['username']
     password = user_form.cleaned_data['password1']
@@ -24,6 +33,11 @@ def create_profile(user_form, profile_form):
         username, password=password, first_name=first_name, last_name=last_name, email=email)
     profile = Profile.objects.create(
         user=user, phone_number=phone_number, date_of_birth=date_of_birth)
+
+    user.is_active = False
+    user.save()
+    send_activation_email(request, user)
+
     if role == 'P':
 
         group = Group.objects.get_or_create(name='Players')[0]
@@ -70,3 +84,53 @@ def is_manager(user):
 
 def not_player(user):
     return not is_player(user)
+
+
+# _______EMAIL_______
+
+class EmailThread(threading.Thread):
+    def __init__(self, subject, content, recipient_list, sender, Images=[], connection=settings.EMAIL_CONNECTIONS["proton"]):
+        self.subject = subject
+        self.recipient_list = recipient_list
+        self.content = content
+        self.sender = sender
+        self.Images = Images
+        self.connection = connection
+        threading.Thread.__init__(self)
+
+    def run(self):
+
+        with get_connection(host=self.connection["host"], port=self.connection["port"], username=self.connection["username"], password=self.connection["password"], use_tls=self.connection["use_tls"], use_ssl=self.connection["use_ssl"]) as connect:
+            msg = EmailMultiAlternatives(
+                self.subject, self.content, self.sender, self.recipient_list, connection=connect)
+            msg.send(fail_silently=False)
+
+
+def send_mail(subject, content, recipient_list, sender, Images=[], connection=settings.EMAIL_CONNECTIONS["proton"]):
+    EmailThread(subject, content, recipient_list, sender,
+                Images=Images, connection=connection).start()
+
+
+class AppTokenGenerator(PasswordResetTokenGenerator):
+
+    def _make_hash_value(self, user, timestamp):
+        return (text_type(user.is_active)+text_type(user.pk)+text_type(timestamp))
+
+
+token_generator = AppTokenGenerator()
+
+
+def send_activation_email(request, user):
+    uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
+    domain = get_current_site(request).domain
+
+    link = reverse('activate', kwargs={
+                   'uidb64': uidb64, 'token': token_generator.make_token(user)})
+    activate_url = "http://"+domain+link
+    email_subject = 'Activate your account'
+    email_recipient = user.email
+    email_body = 'Hi '+user.first_name + \
+        "\nPlease use this link to verify your account\n"+activate_url
+
+    send_mail(email_subject, email_body, sender=settings.EMAIL_HOST_USER,
+              recipient_list=[email_recipient])

@@ -36,9 +36,9 @@ urlpatterns = [
          views.delete_player_profile, name='delete_player_profile'),
     path('delete_coach_profile/<str:username>/',
          views.delete_coach_profile, name='delete_coach_profile'),
+    path('activate/<uidb64>/<token>', views.verify_user, name='activate'),
+
 
 
 
 ]
-
-
