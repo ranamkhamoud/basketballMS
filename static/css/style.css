@@ -1,54 +1,25 @@
 @import url('https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;300;400;500;600;700;800;900&display=swap');
 
 
-*{
-
-  box-sizing: border-box;
-  font-family: 'Inconsolata', monospace;
-}
 
 
-.manager-container{
-  display: flex;
-  flex-direction: row;
+
+.manager-notifications{
   width: 100%;
-  justify-content: space-around;
-
-}
-
-.welcome-title{
-  width: fit-content;
-  display: inline-block;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 50px;
   padding: 0;
-
-
-
-}
-
-
-.table td {
-  padding:0 25px 0 0; /* Only right padding*/
-}
-
-.table th {
-  padding:0 50px 0 0; /* Only right padding*/
-
-}
-
-
-.player-information-list{
-
   list-style: none;
-
-
-
-
 }
 
-.player-information-list li{
+.manager-notifications li{
   margin-bottom: 20px;
-
+  list-style: none;
+  padding-inline-start: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #dee2e6;
+  width: 100%;
 }
-
-
-

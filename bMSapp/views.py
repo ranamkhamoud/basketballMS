@@ -1,11 +1,18 @@
+from .utils import *
 from django.shortcuts import render, redirect
-from .models import Player, Coach, Manager
-from .forms import  UserForm, ProfileForm, UserEditForm, PlayerEditForm
+from .models import *
+from .forms import UserForm, ProfileForm, UserEditForm, PlayerEditForm
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
-from .utils import *
+from django.utils.encoding import force_str, DjangoUnicodeDecodeError
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+# load dotenv
+from dotenv import load_dotenv
+
+# load .env file
+load_dotenv()
 
 
 def whiteboard(request):
@@ -17,7 +24,7 @@ def user_login(request):
         username = request.POST['username']
         password = request.POST['password']
         user = authenticate(request, username=username, password=password)
-        if user is not None:
+        if user is not None and user.is_active:
             login(request, user)
             return redirect_user(user)
 
@@ -40,14 +47,24 @@ def register(request):
         user_form = UserForm(request.POST)
         profile_form = ProfileForm(request.POST)
         if user_form.is_valid() and profile_form.is_valid():
-            user = create_profile(user_form=user_form,
+            user = create_profile(request=request, user_form=user_form,
                                   profile_form=profile_form)
 
-            login(request, user)
+            # login(request, user)
 
-            return redirect_user(user)
+            return redirect("login")
 
     return render(request, 'register.html', {'user_form': user_form, 'profile_form': profile_form})
+
+
+def verify_user(request, uidb64, token):
+    id = force_str(urlsafe_base64_decode(uidb64))
+    user = Profile.objects.get(user__pk=id)
+    if user.user.is_active:
+        return redirect('login')
+    user.user.is_active = True
+    user.user.save()
+    return redirect('login')
 
 
 @login_required
@@ -74,8 +91,9 @@ def manager_after_login(request):
 
     all_players = Player.objects.all()
     all_coaches = Coach.objects.all()
+    all_notifications = Notification.objects.all().order_by('-created_at')
 
-    return render(request, 'manager_after_login.html', {'manager': current_manager, 'players': all_players, 'coaches': all_coaches})
+    return render(request, 'manager_after_login.html', {'manager': current_manager, 'players': all_players, 'coaches': all_coaches, 'notifications': all_notifications})
 
 
 @login_required
@@ -124,4 +142,3 @@ def delete_coach_profile(request, username):
     coach.profile.user.delete()
     coach.delete()
     return redirect('manager_after_login')
-

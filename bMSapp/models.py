@@ -2,6 +2,10 @@ from django.contrib.auth.models import User
 from django.db import models
 
 
+# make email unique
+User._meta.get_field('email')._unique = True
+
+
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     phone_number = models.CharField(max_length=15)
@@ -44,6 +48,21 @@ class Manager(models.Model):
 
     def __str__(self):
         return f"{self.profile.user.first_name} {self.profile.user.last_name}"
+
+
+class Notification(models.Model):
+    owner = models.ForeignKey(
+        Profile, related_name='notifications_owned', on_delete=models.CASCADE)
+    profile = models.ForeignKey(
+        Profile, related_name='notifications', on_delete=models.CASCADE)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.created_at.strftime(' %Y-%m-%d %H: %M: %S')} - {self.profile.user.username}: {self.message}"
 
 
 # class Schedule(models.Model):
