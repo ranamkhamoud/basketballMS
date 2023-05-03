@@ -1,0 +1,12 @@
+{% extends 'base.html' %} {% block content %}
+<h2>Events</h2>
+<ul>
+  {% for event in events %}
+  <li>{{ event.summary }} - {{ event.start.dateTime }}</li>
+  {% endfor %}
+</ul>
+{% comment %}
+<a href="{% url 'create_event' calendar_id=calendar_id %}"
+  >Create a new event</a
+>
+{% endcomment %} {% endblock %}

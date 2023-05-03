@@ -1,4 +1,6 @@
 
+from django.shortcuts import redirect
+from .models import Player, Coach, Manager, Profile
 from django.contrib.auth.models import User, Group
 from .models import *
 from django.shortcuts import render, redirect
@@ -19,8 +21,7 @@ def create_notification(owner, user, message):
     notification.save()
 
 
-def create_profile(request, user_form, profile_form):
-    # I'm sure there is a better way to do this (maybe kwargs? custom form?)
+def create_profile(user_form, profile_form):
     username = user_form.cleaned_data['username']
     password = user_form.cleaned_data['password1']
     first_name = user_form.cleaned_data['first_name']

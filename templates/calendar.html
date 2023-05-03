@@ -1,0 +1,50 @@
+{% extends 'base.html' %} {% block content %}
+<h2>Calendars</h2>
+
+<div class="row">
+  <div class="col-12 col-lg-8 col-xxl-9 d-flex">
+    <iframe
+      id="frame-id"
+      src="https://calendar.google.com/calendar/embed?height=600&wkst=1&bgcolor=%23ffffff&ctz=Asia%2FBeirut&showNav=1&showTitle=0&title&showCalendars=0&src=ODhmZTBkM2U5Y2UxYjJjYzk2NWRlZWIyYjNlZjJmNzBhYjAzNmUwZTJmOTI2N2RkZGY1NDhkMDlhYzM5MTEzNUBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&color=%23009688"
+      style="border: solid 1px #777"
+      width="800"
+      height="600"
+      frameborder="0"
+      scrolling="no"
+    ></iframe>
+  </div>
+</div>
+<div class="row">
+  <div class="col-12 col-lg-8 col-xxl-9 d-flex">
+    <form id="event-form" method="post">
+      {% csrf_token %} {{ form.as_p }}
+      <button type="submit">Create</button>
+    </form>
+  </div>
+  <h2>Events</h2>
+  <ul>
+    {% for event in events %}
+    <li>{{ event.summary }} - {{ event.start.dateTime }}</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %} {% load static %}
+
+<script>
+  document
+    .getElementById("event-form")
+    .addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const formData = new FormData(e.target);
+      fetch(window.location.href, { method: "POST", body: formData })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Event created with ID:", data.event_id);
+          document.getElementById("frame-id").contentWindow.location.reload();
+        })
+        .catch((error) => {
+          console.error("Error creating event:", error);
+        });
+    });
+</script>

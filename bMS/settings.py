@@ -42,9 +42,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'bMSapp',
-    # 'schedule',
-    # 'djangobower',
-
 
 
 ]
@@ -58,8 +55,9 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
-
 ]
+GOOGLE_API_CLIENT_SECRETS_FILE = "client_secret.json"
+GOOGLE_API_TOKEN_FILE = "token.pkl"
 
 ROOT_URLCONF = 'bMS.urls'
 
@@ -170,3 +168,6 @@ EMAIL_CONNECTIONS = {
         "password": EMAIL_HOST_PASSWORD,
     }
 }
+# settings.py
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

@@ -44,6 +44,9 @@ share/python-wheels/
 .Python build/ 
 MANIFEST
 
+token.pkl
+client_secret.json
+
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
