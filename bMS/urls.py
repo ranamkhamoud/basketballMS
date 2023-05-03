@@ -17,7 +17,6 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from bMSapp import views
-
 urlpatterns = [
     path('', views.user_login, name='login'),
     path('admin/', admin.site.urls),
@@ -36,9 +35,15 @@ urlpatterns = [
          views.delete_player_profile, name='delete_player_profile'),
     path('delete_coach_profile/<str:username>/',
          views.delete_coach_profile, name='delete_coach_profile'),
+    path('basketball_whiteboard/', views.basketball_whiteboard,
+         name='basketball_whiteboard'),
+    path('view_images/', views.view_images, name='view_images'),
+    path('save_canvas_image/', views.save_canvas_image, name='save_canvas_image'),
+    path('delete_canvas_image/<int:image_id>/',
+         views.delete_canvas_image, name='delete_canvas_image'),
+    path('authenticate/', views.authenticate_google, name='authenticate'),
+    path('calendar/', views.calendar, name='calendar'),
 
 
 
 ]
-
-

@@ -26,7 +26,7 @@
           {% for coach in coaches %}
           <tr>
             <td>{{ coach.profile.user.get_full_name }}</td>
-            <td class="d-none d-xl-table-cell">{{ coach.profile.user.get_email }}</td>
+            <td class="d-none d-xl-table-cell">{{ coach.profile.user.email }}</td>
             <td class="d-none d-xl-table-cell"></td>
             <td>
               <a href="{% url 'edit_coach_profile' coach.profile.user.username %}">
@@ -94,7 +94,7 @@
               </a>
             </td>
             <td class="d-none d-md-table-cell">
-              <a href="{% url 'delete_player_profile' player.profile.user.username %}" method="post">
+              <form action="{% url 'delete_player_profile' player.profile.user.username %}" method="post">
                 {% csrf_token %}
                 <button class="btn btn-danger" type="submit">Delete</button>
               </form>

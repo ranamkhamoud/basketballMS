@@ -1,11 +1,10 @@
 
 from django.contrib.auth.models import User, Group
 from .models import Player, Coach, Manager, Profile
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect
 
 
 def create_profile(user_form, profile_form):
-    # I'm sure there is a better way to do this (maybe kwargs? custom form?)
     username = user_form.cleaned_data['username']
     password = user_form.cleaned_data['password1']
     first_name = user_form.cleaned_data['first_name']

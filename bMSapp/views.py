@@ -1,15 +1,115 @@
 from django.shortcuts import render, redirect
-from .models import Player, Coach, Manager
-from .forms import  UserForm, ProfileForm, UserEditForm, PlayerEditForm
+from .models import Player, Coach, Manager, CanvasImage
+from .forms import UserForm, ProfileForm, UserEditForm, PlayerEditForm, EventForm
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
+from django.contrib.auth import login, authenticate, logout
 from .utils import *
+from django.http import JsonResponse
+from django.urls import reverse
+import json
+from django.shortcuts import get_object_or_404
+from google.oauth2.credentials import Credentials
+from google_auth_oauthlib.flow import InstalledAppFlow
+from googleapiclient.discovery import build
+from django.conf import settings
+from datetime import datetime, timedelta
+import pickle
+
+
+def authenticate_google(request):
+    scopes = ['https://www.googleapis.com/auth/calendar']
+    flow = InstalledAppFlow.from_client_secrets_file(
+        settings.GOOGLE_API_CLIENT_SECRETS_FILE, scopes=scopes)
+    credentials = flow.run_local_server(port=8080)
+    pickle.dump(credentials, open(settings.GOOGLE_API_TOKEN_FILE, "wb"))
+
+    return redirect('get_calendars')
+
+
+def get_service():
+    credentials = pickle.load(open(settings.GOOGLE_API_TOKEN_FILE, "rb"))
+    return build("calendar", "v3", credentials=credentials)
+
+
+def calendar(request):
+    calendar_id = "88fe0d3e9ce1b2cc965deeb2b3ef2f70ab036e0e2f9267dddf548d09ac391135@group.calendar.google.com"
+    service = get_service()
+    result = service.events().list(calendarId=calendar_id,
+                                   timeZone="Asia/Beirut").execute()
+    events = result['items']
+    if request.method == 'POST':
+        form = EventForm(request.POST)
+        if form.is_valid():
+            event_data = form.cleaned_data
+            start_time = event_data['start_time']
+            end_time = start_time + timedelta(hours=event_data['duration'])
+            timezone = 'Asia/Beirut'
+            event = {
+                'summary': event_data['summary'],
+                'location': event_data['location'],
+                'description': event_data['description'],
+                'start': {
+                    'dateTime': start_time.strftime("%Y-%m-%dT%H:%M:%S"),
+                    'timeZone': timezone,
+                },
+                'end': {
+                    'dateTime': end_time.strftime("%Y-%m-%dT%H:%M:%S"),
+                    'timeZone': timezone,
+                },
+                'organizer': {
+                    'displayName': event_data['organizer_display_name'],
+                    'email': event_data['organizer_email'],
+                },
+            }
+
+            service.events().insert(
+                calendarId=calendar_id, body=event).execute()
+            return redirect(reverse('create_event'))
+
+        else:
+            print("Form is not valid")
+
+    else:
+        form = EventForm()
+
+    return render(request, 'calendar.html', {'form': form, 'events': events})
+
+
+def view_images(request):
+    images = CanvasImage.objects.all()
+    return render(request, 'view_images.html', {'images': images})
+
+
+def save_canvas_image(request):
+    if request.method == 'POST':
+        image_data = request.POST.get('image_data')
+        title = request.POST.get('title', None)
+        canvas_image = CanvasImage(image_data=image_data, title=title)
+        canvas_image.save()
+        return JsonResponse({'status': 'success', 'message': 'Image saved.', 'image_id': canvas_image.id})
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Invalid request method.'})
+
+
+def delete_canvas_image(request, image_id):
+    if request.method == 'POST':
+        image = get_object_or_404(CanvasImage, id=image_id)
+        image.delete()
+        # return JsonResponse({"status": "success"})
+        return redirect('view_images')
+
+    else:
+        return JsonResponse({"status": "error", "message": "Invalid request method"})
 
 
 def whiteboard(request):
     return render(request, 'whiteboard.html')
+
+
+def basketball_whiteboard(request):
+    return render(request, 'basketball_whiteboard.html')
 
 
 def user_login(request):
@@ -63,6 +163,7 @@ def player_after_login(request):
 def coach_after_login(request):
     current_coach = Coach.objects.get(profile__user=request.user)
     players = Player.objects.all()
+
     return render(request, 'coach_after_login.html', {'coach': current_coach, 'players': players})
 
 
@@ -108,12 +209,13 @@ def edit_coach_profile(request, username):
 
 
 @login_required
-@user_passes_test(is_manager)
+@user_passes_test(not_player)
 def delete_player_profile(request, username):
     player = Player.objects.get(profile__user__username=username)
-    # delete user as well
     player.profile.user.delete()
     player.delete()
+    if is_coach(request.user):
+        return redirect('_after_login')
     return redirect('manager_after_login')
 
 
@@ -124,4 +226,3 @@ def delete_coach_profile(request, username):
     coach.profile.user.delete()
     coach.delete()
     return redirect('manager_after_login')
-
