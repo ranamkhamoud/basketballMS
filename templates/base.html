@@ -21,10 +21,21 @@
 
 				<ul class="sidebar-nav">
 					<li class="sidebar-item active">
-						<a class="sidebar-link" href="#">
-              <i class="align-middle" data-feather="sliders"></i> <span class="align-middle">Dashboard</span>
+						<a class="sidebar-link" href="{% url 'coach_after_login' %}">
+							<a class="sidebar-link" href="{% url 'player_after_login' %}">
+    			<i class="align-middle" data-feather="sliders"></i> <span class="align-middle">Dashboard</span>
+			</li>
             </a>
+			<li class="sidebar-item">
+			<a class="sidebar-link" href="{% url 'view_images' %}">
+				<i class="align-middle" data-feather="book"></i> <span class="align-middle">Playbook</span>
+			  </a>
 					</li>
+					<li class="sidebar-item">
+						<a class="sidebar-link" href="{% url 'calendar' %}">
+							<i class="align-middle" data-feather="calendar"></i> <span class="align-middle">Calendar</span>
+						  </a>
+								</li>
 					{% if not user.is_authenticated %}
 					<li class="sidebar-item">
 						<a class="sidebar-link" href="{% url 'login' %}">

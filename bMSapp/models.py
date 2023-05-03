@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.utils import timezone
 
 
 # make email unique
@@ -38,7 +39,6 @@ class Player(models.Model):
 
 class Coach(models.Model):
     profile = models.OneToOneField(Profile, on_delete=models.CASCADE)
-    # team = models.CharField(max_length=50)
 
     def __str__(self):
         return f"{self.profile.user.first_name} {self.profile.user.last_name}"
@@ -156,3 +156,13 @@ class Announcement(models.Model):
 
 # def __str__(self):
 #     return f'{self.user} - {self.action} - {self.timestamp}'
+
+
+class CanvasImage(models.Model):
+    title = models.CharField(max_length=100, default='Untitled')
+    image_data = models.TextField()
+    # add default time stamp
+    created_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.title

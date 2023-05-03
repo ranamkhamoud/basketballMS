@@ -1,0 +1,70 @@
+{% extends 'base.html' %} {% block content %} {% load static %}
+<link rel="stylesheet" href="{% static 'css/gallery.css' %}" />
+
+<div class="container">
+  <div class="row">
+    <div class="col-12">
+      <h1></h1>
+    </div>
+      {% for image in images %}
+      <div class="col-12 col-md-6">
+        <div class="card">
+          <img
+            class="card-img"
+            src="{{ image.image_data }}"
+            alt="Canvas Image"
+          />
+          <div class="card-header">
+            <h5 class="card-title mb-0">{{ image.title }}</h5>
+          </div>
+       
+          <div class="card-body">
+            <p class="card-text">
+            Uploaded on {{ image.created_at|date:"F j, Y, P" }}
+          </p>
+            <form
+              action="{% url 'delete_canvas_image' image.id %}"
+              method="POST"
+            >
+              {% csrf_token %}
+              <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <p>No images found.</p>
+      {% endfor %}
+    </div>
+  </div>
+  {% endblock %}
+</div>
+{% load static %}
+
+<script>
+  function deleteImage(imageId) {
+    const csrfToken = document.querySelector(
+      "[name=csrfmiddlewaretoken]"
+    ).value;
+
+    fetch(`/delete_canvas_image/${imageId}/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "X-CSRFToken": csrfToken,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status === "success") {
+          console.log("Image deleted successfully.");
+          window.location.href = "/view_images/"; // Redirect to the view_images page
+        } else {
+          console.error("Error deleting image:", data.message);
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }
+</script>

@@ -1,0 +1,100 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Basketball Coach Whiteboard</title>
+    {% load static %}
+
+    <script src="{% static 'js/fabric.min.js' %}"></script>
+    {% load static %}
+
+    <link rel="stylesheet" href="{% static 'css/whiteboard.css' %}" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css"
+    />
+  </head>
+  <body>
+
+    <div id="toolbar">
+      <button
+        class="btn"
+        onclick="window.location.href='{% url 'coach_after_login' %}'"
+      >
+        Go To Dashboard
+      </button>
+      <input type="color" id="colorPicker" value="#000000" />
+      <button id="addText">Add Text</button>
+      <input type="text" id="textInput" placeholder="Enter text" />
+      <button id="clear"><i class="bi bi-x-square-fill"></i></button>
+      <button id="undo"><i class="bi bi-arrow-counterclockwise"></i></button>
+      <button id="erase"><i class="bi bi-eraser-fill"></i></button>
+      <div id="addPlayers">
+        <button id="addPG">PG</button>
+        <button id="addSG">SG</button>
+        <button id="addSF">SF</button>
+        <button id="addPF">PF</button>
+        <button id="addC">C</button>
+      </div>
+        <button id="freehand"><i class="bi bi-pencil-fill"></i></button>
+
+
+        <label for="freehandWidthSlider">Width:</label>
+        <input
+          type="range"
+          id="freehandWidthSlider"
+          min="1"
+          max="50"
+          value="1"
+        />
+        <button id="saveToDevice">Save to Device</button>
+        <button id="select"><i class="bi bi-arrows-move"></i></button>
+        <button id="addOutlinedCircle">
+          <i class="bi bi-circle-fill"></i>
+        </button>
+        <button id="addOutlinedTriangle">
+          <i class="bi bi-triangle-fill"></i>
+        </button>
+        <button id="addRectangle"><i class="bi bi-square-fill"></i></button>
+        <form method="post">
+          {% csrf_token %}
+          <button id="save-image-btn">Save Image</button>
+          <input type="text" id="title-input" placeholder="Enter a title for your image"  required/>
+
+        </form>
+        
+
+      </div>
+      <div id="players">
+        <!-- Add draggable player elements here -->
+      </div>
+    </div>
+    <div id="whiteboard">
+      <canvas id="canvas" width="1200" height="700"></canvas>
+    </div>
+    <div id="help"/>
+    <h1>Help Section</h1>
+    <h2>Toolbar</h2>
+    <ul>
+      <li>Use the color picker to select the color of your drawings and shapes.</li>
+      <li>Click the "Add Text" button to add text to the whiteboard.</li>
+      <li>Click the "Clear" button to erase everything on the whiteboard.</li>
+      <li>Click the "Undo" button to undo your last drawing or shape.</li>
+      <li>Click the "Erase" button to activate the eraser tool.</li>
+      <li>Click the buttons under "Add Players" to add draggable player elements to the whiteboard.</li>
+      <li>Click the "Freehand" button to activate the freehand drawing tool.</li>
+      <li>Use the freehand width slider to adjust the width of your freehand drawings.</li>
+      <li>Click the "Save to Device" button to save an image of the whiteboard to your device.</li>
+      <li>Click the "Select" button to activate the select tool.</li>
+      <li>Click the "Add Outlined Circle" button to add an outlined circle shape to the whiteboard.</li>
+      <li>Click the "Add Outlined Triangle" button to add an outlined triangle shape to the whiteboard.</li>
+      <li>Click the "Add Rectangle" button to add a rectangle shape to the whiteboard.</li>
+    </ul>
+  </div>
+    {% load static %}
+    <script src="{% static 'js/whiteboard.js' %}"></script>
+  </body>
+</html>

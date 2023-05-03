@@ -67,3 +67,16 @@ class CoachForm(forms.ModelForm):
     class Meta:
         model = Coach
         fields = ['profile']
+
+
+class EventForm(forms.Form):
+    summary = forms.CharField(label='Summary', max_length=100)
+    location = forms.CharField(label='Location', max_length=100)
+    description = forms.CharField(
+        label='Description', max_length=500, widget=forms.Textarea)
+    start_time = forms.DateTimeField(
+        label='Start Time', widget=forms.TextInput(attrs={'type': 'datetime-local'}))
+    duration = forms.FloatField(label='Duration (hours)')
+    organizer_display_name = forms.CharField(
+        label="Organizer's Name", max_length=100)
+    organizer_email = forms.EmailField(label="Organizer's Email")
