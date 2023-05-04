@@ -1,0 +1,49 @@
+{% extends 'base.html' %} {% block content %}
+<main class="content">
+  <div class="container-fluid p-0">
+    <h1 class="h3 mb-3"><strong>Announcements</strong></h1>
+
+    <div class="row">
+      <div class="col-12 col-lg-8 col-xxl-9 d-flex">
+          <div class="card">
+            <div class="card-body">
+              <div class="m-sm-4">
+    
+                <form method="POST">
+                    {% csrf_token %}
+                  <div class="mb-3">
+                    <label class="form-label">Make announcement</label>
+                    <input
+                      class="form-control"
+                      type="text"
+                      id="message"
+                      name="message"
+                      placeholder="Enter message..."
+     
+                    />
+                  </div>
+                  
+                  <button type="submit" class="btn btn-info">Submit</button>
+                </form>
+              </div>
+            </div>
+          <div class="card flex-fill">
+          <div class="card-header"></div>
+        </div>
+        <div class="card-body d-flex w-100">
+          <div class="align-self-center chart chart-lg">
+            <ul class="manager-notifications">
+              {% for announcement in announcements %}
+              <li>
+                {{announcement.owner.user.username}} - {{announcement.datetime}} -
+                {{announcement.message}}
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock %}

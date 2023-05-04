@@ -35,6 +35,11 @@ urlpatterns = [
          views.delete_player_profile, name='delete_player_profile'),
     path('delete_coach_profile/<str:username>/',
          views.delete_coach_profile, name='delete_coach_profile'),
+    path('activate/<uidb64>/<token>', views.verify_user, name='activate'),
+    path('advance_month/', views.advance_month, name='advance_month'),
+    path('announcements/', views.announcements, name='announcements'),
+
+
     path('basketball_whiteboard/', views.basketball_whiteboard,
          name='basketball_whiteboard'),
     path('view_images/', views.view_images, name='view_images'),

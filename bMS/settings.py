@@ -10,10 +10,14 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
+from dotenv import load_dotenv
 from pathlib import Path
 import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
+
+
+load_dotenv()
 
 
 # Quick-start development settings - unsuitable for production
@@ -68,6 +72,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                # "django.template.context_processors.request"
+
             ],
         },
     },
@@ -86,6 +92,17 @@ DATABASES = {
         'NAME': BASE_DIR / 'basketball.db',
     }
 }
+
+# BOWER_COMPONENTS_ROOT = os.path.join(BASE_DIR, 'components')
+
+
+# List of finder classes that know how to find static files in
+# various locations.
+# STATICFILES_FINDERS = (
+#     'django.contrib.staticfiles.finders.FileSystemFinder',
+#     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+#     'djangobower.finders.BowerFinder',
+# )
 
 
 # Password validation
@@ -128,6 +145,29 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
+
+EMAIL_BACKEND = os.environ.get(
+    'EMAIL_BACKEND', 'django.core.mail.backends.smtp.EmailBackend')
+EMAIL_HOST = os.environ.get('EMAIL_HOST')
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+EMAIL_PORT = os.environ.get('EMAIL_PORT')
+EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS')
+
+os.environ
+# django mail
+
+EMAIL_CONNECTIONS = {
+    'proton': {
+
+        "host": EMAIL_HOST,
+        "use_tls": True,
+        "use_ssl": False,
+        "port": EMAIL_PORT,
+        "username": EMAIL_HOST_USER,
+        "password": EMAIL_HOST_PASSWORD,
+    }
+}
 # settings.py
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
