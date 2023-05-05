@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Directing Template" />
+    <meta name="keywords" content="Directing, unica, creative, html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>BMS </title>
+
+    <!-- Google Font -->
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" crossorigin="anonymous"></script>
+
+    {% load static %}
+    <!-- Css Styles -->
+    <link
+      rel="stylesheet"
+      href="{% static 'css_landing/bootstrap.min.css' %}"
+      type="text/css"
+    />
+    <link
+      rel="stylesheet"
+      href="{% static 'css_landing/elegant-icons.css' %}"
+      type="text/css"
+    />
+    <link
+      rel="stylesheet"
+      href="{% static 'css_landing/nice-select.css' %}"
+      type="text/css"
+    />
+    <link
+      rel="stylesheet"
+      href="{% static 'css_landing/barfiller.css'%}"
+      type="text/css"
+    />
+    <link
+      rel="stylesheet"
+      href="{% static 'css_landing/owl.carousel.min.css' %}"
+      type="text/css"
+    />
+    <link
+      rel="stylesheet"
+      href="{% static 'css_landing/slicknav.min.css' %}"
+      type="text/css"
+    />
+    <link
+      rel="stylesheet"
+      href="{% static 'css_landing/style.css' %}"
+      type="text/css"
+    />
+  </head>
+
+  <body>
+    <!-- Page Preloder -->
+     <div id="preloder">
+      <div class="loader"></div>
+    </div> 
+
+
+
+    <!-- Header Section Begin -->
+    <header class="header">
+      <div class="header__top">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-3 col-md-3">
+              <div class="header__logo">
+                <a href="./index.html"><img src="img/logo.png" alt="" /></a>
+              </div>
+            </div>
+            <div class="col-lg-9 col-md-9">
+              <div class="header__top__widget">
+                <ul>
+                 <li>CALL US: + 1 800-567-8990</li>
+                                <li>WRITE US: hoopproton@zohomail.com</li> 
+                </ul>
+                <a href="{% url 'login' %}" class="primary-btn">LOGIN</a>
+              </div>
+            </div>
+          </div>
+          <div class="canvas__open">
+            <i class="fa fa-bars"></i>
+          </div>
+        </div>
+      </div>
+      <div class="header__nav">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-9 col-md-9">
+              <nav class="header__menu">
+                <ul>
+                  <li class="active"><a href="{% url 'landing_page' %}">Home</a></li>
+                  <li><a href="{% url 'pricing' %}">Pricing</a></li>
+                  <li><a href="{% url 'contact'%}">Contact</a></li>
+                </ul>
+              </nav>
+            </div>
+            <div class="col-lg-3 col-md-3">
+              <div class="header__social">
+                <a href="#"><i class="fa fa-facebook"></i></a>
+                <a href="#"><i class="fa fa-twitter"></i></a>
+                <a href="#"><i class="fa fa-instagram"></i></a>
+                <a href="#"><i class="fa fa-linkedin"></i></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+    <body>
+    {% block content %}{% endblock %}
+        <!-- Footer Section Begin -->
+        <section class="footer">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-3 col-md-6 col-sm-6">
+                        <div class="footer__widget">
+                            <h5>Contact Us</h5>
+                            <ul class="footer-address">
+                                <li><i class="fa fa-phone"></i> (01) 436 8888</li>
+                                <li><i class="fa fa-envelope"></i> hoopproton@zohomail.com</li>
+                                <li><i class="fa fa-location-arrow"></i> 828 Granville Lights Suite 466</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 col-sm-6">
+                        <div class="footer__about">
+                            <img src="img/footer-logo.png" alt="">
+                            <ul>
+                                <li><i class="fa fa-clock-o"></i> Mon - Fri: 6:30am - 07:45pm</li>
+                                <li><i class="fa fa-clock-o"></i> Sat - Sun: 8:30am - 05:45pm</li>
+                            </ul>
+
+                        </div>
+                    </div>
+
+
+\
+                </div>
+
+            </div>
+        </section>
+        <!-- Footer Section End -->
+    <script src="{% static 'js_landing/jquery-3.3.1.min.js' %}"></script>
+    <script src="{% static 'js_landing/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js_landing/jquery.nice-select.min.js' %}"></script>
+    <script src="{% static 'js_landing/jquery.barfiller.js' %}"></script>
+    <script src="{% static 'js_landing/jquery.slicknav.js' %}"></script>
+    <script src="{% static 'js_landing/owl.carousel.min.js' %}"></script>
+    <script src="{% static 'js_landing/main.js' %}"></script>
+
+  </body>
+</html>

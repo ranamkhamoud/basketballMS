@@ -1,0 +1,197 @@
+
+{% extends 'base_landing.html' %} 
+{% block content %}
+    <!-- Hero Section Begin -->
+    <section class="hero">
+        <div class="hero__sliders owl-carousel">
+            {% load static %}
+            <div class="hero__items set-bg" data-setbg="{% static 'images/img/hero/hero-1.jpeg' %}">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="hero__text">
+                                <span>Welcome to Hoop Proton</span>
+                                <h2>Dominate the court with our winning software</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% load static %}
+            <div class="hero__items set-bg" data-setbg="{% static 'images/img/hero/hero-2.jpg' %}">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="hero__text">
+                                <span>Welcome to Hoop Proton</span>
+                                <h2>Unleash your team's winning strategy</h2>                            
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Hero Section End -->
+
+    <!-- About Section Begin -->
+    <section class="home-about spad">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-7">
+                    <div class="home__about__pic">
+                        <div class="home__about__pic__item large-item set-bg" data-setbg="{% static 'images/img/about/about-1.jpg' %}"></div>
+                        <div class="home__about__pic__item">
+
+                            <div class="home__about__pic__item__inner set-bg" data-setbg="{% static 'images/img/about/about-2.jpg' %}"></div>
+                            <div class="home__about__pic__item__inner set-bg" data-setbg="{% static 'images/img/about/about-3.jpg' %}"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    <div class="home__about__text">
+                        <div class="section-title">
+                            <h2>Welcome to Hoop Proton</h2>
+                        </div>
+                        <span>"Basketball: More than just a game."</span>
+                        <p>Join us for an immersive and transformative experience with our internationally recognized Basketball Management System. Our program offers a comprehensive training in basketball management, designed to help you take your game to the next level.</p>
+<p class="para-2">At Hoop Proton, we are dedicated to providing an authentic and enriching experience in the world of basketball. Our program focuses on the art of creating winning strategies, building strong teams, and teaching the fundamentals of the game. We are passionate about perfecting the finer points of basketball management and providing our participants with the skills they need to succeed.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- About Section End -->
+
+   
+    <!-- Chooseus Section Begin -->
+    <section class="chooseus spad">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="chooseus__text">
+                        <h2>Why Choose Us</h2>
+                        <p>Our basketball management system is designed to help you reach your full potential and achieve your goals. Here's why you should choose us</p>
+                    </div>
+                    <div class="chooseus__item">
+                        <div class="chooseus__item__icon">
+                        </div>
+                        <div class="chooseus__item__text">
+                            <h2 class="choose-counter">2146</h2>
+                            <p>Happy customers</p>
+                        </div>
+                    </div>
+                    <div class="chooseus__item">
+                        <div class="chooseus__item__icon">
+                        </div>
+                        <div class="chooseus__item__text">
+                            <h2 class="choose-counter">15</h2>
+                            <p>Years Of Experience</p>
+                        </div>
+                    </div>
+                    <div class="chooseus__item">
+                        <div class="chooseus__item__icon">
+                        </div>
+                        <div class="chooseus__item__text">
+                            <h2 class="choose-counter">48</h2>
+                            <p>Dedicated support</p>
+                        </div>
+                    </div>
+                    <div class="chooseus__item">
+                        <div class="chooseus__item__icon">
+                           
+                        </div>
+                        <div class="chooseus__item__text">
+                            <h2 class="choose-counter">234</h2>
+                            <p>Expert Staffs</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="chooseus__pic">
+
+                        <img src="{% static 'images/img/chooseus/choose-pic.jpg' %}" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Chooseus Section End -->
+
+
+   <!-- Faq Begin -->
+<div class="faq spad">
+    <div class="container">
+        <div class="row d-flex justify-content-center">
+            <div class="col-lg-10">
+                <div class="faq__accordion">
+                    <div class="accordion" id="accordionExample">
+                        <div class="card">
+                            <div class="card-heading active">
+                                <a data-toggle="collapse" data-target="#collapseOne">
+                                    <span>What features are included in the basketball management system?</span>
+                                </a>
+                            </div>
+                            <div id="collapseOne" class="collapse" data-parent="#accordionExample">
+                                <div class="card-body">
+                                    <p>The basketball management system includes several features to help coaches and managers stay organized and manage their team more effectively:</p>
+                                    <ul>
+                                        <li>A whiteboard for coaches to draw up plays and strategies.</li>
+                                        <li>A payment management system for managers to handle player payments</li>
+                                        <li>A playbook with strategy plans for easy coaching.</li>
+                                        <li>An announcement feature to communicate important updates and news to the team.</li>
+                                        <li>A calendar to schedule practices, games, and other events.</li>
+                                    </ul>
+                                    <p>With all these features and more, the basketball management system is a powerful tool for any coach or manager looking to improve their team's performance.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-heading">
+                                <a data-toggle="collapse" data-target="#collapseTwo">
+                                    <span>How can the whiteboard feature help coaches?</span>
+                                </a>
+                            </div>
+                            <div id="collapseTwo" class="collapse" data-parent="#accordionExample">
+                                <div class="card-body">
+                                    <p>The whiteboard feature is an essential tool for basketball coaches, allowing them to draw up plays and strategies with ease. With the ability to quickly sketch out different scenarios and make changes on the fly, coaches can communicate their ideas more effectively to their team and make adjustments during games as needed. This feature is especially useful for coaches who want to help their players improve their understanding of the game and develop more complex plays and strategies over time.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-heading">
+                                <a data-toggle="collapse" data-target="#collapseThree">
+                                    <span>What advantages does the playbook feature offer?</span>
+                                </a>
+                            </div>
+                            <div id="collapseThree" class="collapse" data-parent="#accordionExample">
+                                <div class="card-body">
+                                    <p>The playbook feature is a powerful tool for basketball coaches and managers, as it provides pre-designed strategy plans that can be easily implemented by the team. By having a set of proven plays and strategies to draw from, coaches can save time and improve their team's performance more quickly. Additionally, the playbook feature allows coaches to customize these plans to fit their team's specific needs, making it an invaluable resource for any coach or manager looking to take their team to the next level.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-heading">
+                                <a data-toggle="collapse" data-target="#collapseFive">
+                                    <span>Can the calendar feature be synced with other calendar apps?</span>
+                                </a>
+                                </div>
+                                <div id="collapseFive" class="collapse" data-parent="#accordionExample">
+                                <div class="card-body">
+                                <p>Yes, the calendar feature can be easily synced with other popular calendar apps such as Google Calendar or Apple Calendar. This allows coaches and managers to keep track of team events and schedules alongside their other personal and professional commitments.</p>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Faq End -->
+
+
+
+    {% endblock %}
+
+</body>

@@ -22,11 +22,12 @@
             <p class="card-text">
             Uploaded on {{ image.created_at|date:"F j, Y, P" }}
           </p>
+         
             <form
               action="{% url 'delete_canvas_image' image.id %}"
               method="POST"
             >
-              {% csrf_token %}
+        
               <button type="submit" class="btn btn-danger">Delete</button>
             </form>
           </div>

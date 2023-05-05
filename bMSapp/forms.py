@@ -1,5 +1,5 @@
 from django import forms
-from .models import Player, Coach
+from .models import Player, Coach, Manager
 from django.contrib.auth.forms import UserCreationForm
 from .models import Profile
 from django.contrib.auth.models import User
@@ -77,6 +77,3 @@ class EventForm(forms.Form):
     start_time = forms.DateTimeField(
         label='Start Time', widget=forms.TextInput(attrs={'type': 'datetime-local'}))
     duration = forms.FloatField(label='Duration (hours)')
-    organizer_display_name = forms.CharField(
-        label="Organizer's Name", max_length=100)
-    organizer_email = forms.EmailField(label="Organizer's Email")
