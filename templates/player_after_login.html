@@ -1,138 +1,161 @@
-{% extends 'base.html' %} {% block content %}
+{% extends 'base_player.html' %} {% block content %}
 <main class="d-flex w-100">
-  <div class="container d-flex flex-column">
-    <div class="row">
-      <div class="col-sm-10 col-md-8 col-lg-6 mx-auto d-table h-100">
-        <div class="d-table-cell align-middle">
-          <div class="text-center mt-4">
-            <h1 class="h2">Player Profile</h1>
-            <p class="lead"></p>
-          </div>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-10">
+        <div class="text-center mt-4">
+          <h1 class="h2">Player Profile</h1>
+        </div>
 
-          <div class="card">
-            <div class="card-body">
-              <div class="m-sm-4">
-                <form>
-                  <div class="mb-3">
-                    <label class="form-label">First Name</label>
-                    <input
-                      class="form-control"
-                      type="text"
-                      placeholder="{{ player.profile.user.first_name }}"
-                      readonly
-                    />
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Last Name</label>
-                    <input
-                      class="form-control"
-                      type="text"
-                      placeholder="{{ player.profile.user.last_name }}"
-                      readonly
-                    />
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Username</label>
-                    <input
-                      class="form-control"
-                      type="text"
-                      placeholder="{{ player.profile.user.username }}"
-                      readonly
-                    />
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Email</label>
-                    <input
-                      class="form-control"
-                      type="text"
-                      placeholder="{{ player.profile.user.email }}"
-                      readonly
-                    />
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Date of Birth</label>
-                    <input
-                      class="form-control"
-                      type="text"
-                      placeholder="{{ player.profile.date_of_birth }}"
-                      readonly
-                    />
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Phone number</label>
-                    <input
-                      class="form-control"
-                      type="text"
-                      placeholder="{{ player.profile.phone_number }}"
-                      readonly
-                    />
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Position</label>
-                    {% if player.position %}
-                    <input
-                      class="form-control"
-                      type="text"
-                      placeholder="{{ player.position }}"
-                      readonly
-                    />
-                    {% else %}
-                    <input
-                      class="form-control"
-                      type="text"
-                      placeholder="Not specified yet"
-                      readonly
-                    />
-                    {% endif %}
-                  </div>
-                </form>
+        <div class="card mt-4">
+          <div class="card-header">
+            <h4>Personal Information</h4>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label">First Name</label>
+                  <input
+                    class="form-control"
+                    type="text"
+                    placeholder="{{ player.profile.user.first_name }}"
+                    readonly
+                  />
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Last Name</label>
+                  <input
+                    class="form-control"
+                    type="text"
+                    placeholder="{{ player.profile.user.last_name }}"
+                    readonly
+                  />
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Username</label>
+                  <input
+                    class="form-control"
+                    type="text"
+                    placeholder="{{ player.profile.user.username }}"
+                    readonly
+                  />
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Email</label>
+                  <input
+                    class="form-control"
+                    type="text"
+                    placeholder="{{ player.profile.user.email }}"
+                    readonly
+                  />
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label">Date of Birth</label>
+                  <input
+                    class="form-control"
+                    type="text"
+                    placeholder="{{ player.profile.date_of_birth }}"
+                    readonly
+                  />
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Phone number</label>
+                  <input
+                    class="form-control"
+                    type="text"
+                    placeholder="{{ player.profile.phone_number }}"
+                    readonly
+                  />
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Position</label>
+                  {% if player.position %}
+                  <input
+                    class="form-control"
+                    type="text"
+                    placeholder="{{ player.position }}"
+                    readonly
+                  />
+                  {% else %}
+                  <input
+                    class="form-control"
+                    type="text"
+                    placeholder="Not specified yet"
+                    readonly
+                  />
+                  {% endif %}
+                </div>
               </div>
             </div>
           </div>
+        </div>
 
-          <div class="text-center mt-4">
-            <h1 class="h2">Payments</h1>
-            <p class="lead"></p>
+        <div class="text-center mt-4">
+          <h1 class="h2">Payments</h1>
+        </div>
+
+        <div class="card mt-4">
+          <div class="card-header">
+            <h4>Payment History</h4>
           </div>
-
-          <div class="card">
-            <div class="card-body">
-              {%for payment in payments%}
-              <div class="m-sm-4">
-                <label class="form-label">Amount</label>
-                <input
-                  class="form-control"
-                  type="text"
-                  placeholder="${{payment.amount}}"
-                  readonly
-                />
-                <label class="form-label">Date</label>
-                <input
-                  class="form-control"
-                  type="text"
-                  placeholder="{{payment.date}}"
-                  readonly
-                />
+          <div class="card-body">
+            {% for payment in payments %}
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label">Amount</label>
+                  <input
+                    class="form-control"
+                    type="text"
+                    placeholder="${{ payment.amount }}"
+                    readonly
+                  />
+                  
+                </div>
               </div>
-              {%endfor%}
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label">Date</label>
+                  <input
+                    class="form-control"
+                    type="text"
+                    placeholder="{{ payment.date }}"
+                    readonly
+                  />
+                </div>
+              </div>
             </div>
+            {% empty %}
+            <p>No Payments Yet.</p>
+            {% endfor %}
           </div>
+        </div>
 
-          <div class="text-center mt-4">
-            <h1 class="h2">Make payment</h1>
-            <p class="lead"></p>
+        <div class="text-center mt-4">
+          <h1 class="h2">Make Payment</h1>
+        </div>
+
+        <div class="card mt-4">
+          <div class="card-header">
+            <h4>Submit Payment</h4>
           </div>
-
-          <div class="card">
-            <div class="card-body">
-              <div class="m-sm-4">
-                <label class="form-label">Amount due</label>
-                <input
-                  class="form-control"
-                  type="text"
-                  placeholder="${{player.pending_payment}}"
-                  readonly
-                />
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label">Amount due</label>
+                  <input
+                    class="form-control"
+                    type="text"
+                    placeholder="${{ player.pending_payment }}"
+                    readonly
+                  />
+                </div>
+              </div>
+              <div class="col-md-6">
                 <form method="POST">
                   {% csrf_token %}
                   <div class="mb-3">
@@ -144,36 +167,24 @@
                       name="amount"
                       placeholder="Enter amount..."
                       min="0"
+                      max="{{ player.pending_payment }}"
+                      {% if player.pending_payment == 0 %}disabled{% endif %}
+                    
+
                     />
                   </div>
-
-                  <button type="submit" class="btn btn-info">Submit</button>
+          
+                  <button type="submit" class="btn btn-info" {% if player.pending_payment == 0 %}disabled{% endif %}>Submit</button>
                 </form>
               </div>
             </div>
-            <div class="text-center mt-4">
-              <h1 class="h2">Announcements</h1>
-              <p class="lead"></p>
-            </div>
-
-            <div class="card">
-              <div class="card-body">
-                <div class="m-sm-4">
-                  <ul class="manager-notifications">
-                    {% for announcement in announcements %}
-                    <li>
-                      {{announcement.owner.user.username}} -
-                      {{announcement.datetime}} - {{announcement.message}}
-                    </li>
-                    {% endfor %}
-                  </ul>
-                </div>
-              </div>
-            </div>
+          </div>
+          
           </div>
         </div>
       </div>
     </div>
   </div>
+
 </main>
 {% endblock %}

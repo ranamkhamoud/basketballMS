@@ -13,6 +13,8 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
 from django.utils.encoding import force_bytes
+from django.template.loader import render_to_string
+from django import template
 
 
 def create_notification(owner, user, message):
@@ -21,7 +23,7 @@ def create_notification(owner, user, message):
     notification.save()
 
 
-def create_profile(user_form, profile_form):
+def create_profile(request, user_form, profile_form):
     username = user_form.cleaned_data['username']
     password = user_form.cleaned_data['password1']
     first_name = user_form.cleaned_data['first_name']

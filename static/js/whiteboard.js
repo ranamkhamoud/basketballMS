@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  //setBackgroundImage("http://clipart-library.com/img1/1147856.png");
+  setBackgroundImage("/static/images/bg.png");
 
   // Color picker
   const colorPicker = document.getElementById("colorPicker");
@@ -278,6 +278,7 @@ document.addEventListener("DOMContentLoaded", function () {
   function saveCanvasImage() {
     const canvasDataUrl = getCanvasDataUrl();
     const title = document.getElementById("title-input").value;
+    console.log("Title:", title);
     const csrfToken = document.querySelector(
       "[name=csrfmiddlewaretoken]"
     ).value;

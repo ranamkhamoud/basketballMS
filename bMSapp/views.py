@@ -5,8 +5,6 @@ from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.oauth2.credentials import Credentials
 from django.shortcuts import get_object_or_404
-import json
-from django.urls import reverse
 from django.http import JsonResponse
 from django.contrib.auth import login, authenticate, logout
 from .forms import UserForm, ProfileForm, UserEditForm, PlayerEditForm, EventForm
@@ -14,21 +12,37 @@ from .models import Player, Coach, Manager, CanvasImage
 from .utils import *
 from django.shortcuts import render, redirect
 from .models import *
-from django.db.models import Subquery, OuterRef, F
+from django.db.models import Subquery, F
 from .forms import UserForm, ProfileForm, UserEditForm, PlayerEditForm
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
-from django.utils.encoding import force_str, DjangoUnicodeDecodeError
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-import datetime  # load dotenv
+from django.contrib.auth import login, authenticate, logout
+from django.utils.http import urlsafe_base64_decode
+import datetime
 from dotenv import load_dotenv
 import decimal
+from django.utils.encoding import force_str
+
 from .utils import *
+
 
 # load .env file
 load_dotenv()
+
+
+def delete_event(request, event_id):
+    calendar_id = "88fe0d3e9ce1b2cc965deeb2b3ef2f70ab036e0e2f9267dddf548d09ac391135@group.calendar.google.com"
+    service = get_service()
+
+    try:
+        service.events().delete(calendarId=calendar_id, eventId=event_id).execute()
+        messages.success(request, "Event deleted successfully.")
+    except Exception as e:
+        messages.error(
+            request, "Failed to delete the event. Error: {}".format(e))
+
+    return redirect('calendar')
 
 
 def authenticate_google(request):
@@ -52,34 +66,39 @@ def calendar(request):
     result = service.events().list(calendarId=calendar_id,
                                    timeZone="Asia/Beirut").execute()
     events = result['items']
+    events = sorted(events, key=lambda x: x['created'], reverse=True)
     if request.method == 'POST':
         form = EventForm(request.POST)
+
         if form.is_valid():
             event_data = form.cleaned_data
             start_time = event_data['start_time']
             end_time = start_time + timedelta(hours=event_data['duration'])
             timezone = 'Asia/Beirut'
-            event = {
-                'summary': event_data['summary'],
-                'location': event_data['location'],
-                'description': event_data['description'],
-                'start': {
-                    'dateTime': start_time.strftime("%Y-%m-%dT%H:%M:%S"),
-                    'timeZone': timezone,
-                },
-                'end': {
-                    'dateTime': end_time.strftime("%Y-%m-%dT%H:%M:%S"),
-                    'timeZone': timezone,
-                },
-                'organizer': {
-                    'displayName': event_data['organizer_display_name'],
-                    'email': event_data['organizer_email'],
-                },
+
+            freebusy_request = {
+                "timeMin": start_time.isoformat(),
+                "timeMax": end_time.isoformat(),
+                "timeZone": timezone,
+                "items": [{"id": calendar_id}]
             }
 
-            service.events().insert(
-                calendarId=calendar_id, body=event).execute()
-            return redirect(reverse('create_event'))
+            freebusy_result = service.freebusy().query(body=freebusy_request).execute()
+
+            if freebusy_result['calendars'][calendar_id]['busy']:
+                messages.error(
+                    request, "There is already an event during this time.")
+            else:
+                event = {
+                    'summary': event_data['summary'],
+                    'location': event_data['location'],
+                    'description': f"Organized by: {request.user.first_name} {request.user.last_name}<br><br>Event details :{event_data['description']}",
+                    'start': {'dateTime': start_time.strftime("%Y-%m-%dT%H:%M:%S"), 'timeZone': timezone},
+                    'end': {'dateTime': end_time.strftime("%Y-%m-%dT%H:%M:%S"), 'timeZone': timezone},
+                }
+                service.events().insert(calendarId=calendar_id, body=event).execute()
+
+            return redirect('calendar')
 
         else:
             print("Form is not valid")
@@ -93,6 +112,34 @@ def calendar(request):
 def view_images(request):
     images = CanvasImage.objects.all()
     return render(request, 'view_images.html', {'images': images})
+
+
+def announcements_player(request):
+    announcements = Announcement.objects.all().order_by('-datetime')
+
+    return render(request, 'announcements_player.html', {'announcements': announcements})
+
+
+def calendar_player(request):
+    calendar_id = "88fe0d3e9ce1b2cc965deeb2b3ef2f70ab036e0e2f9267dddf548d09ac391135@group.calendar.google.com"
+    service = get_service()
+    result = service.events().list(calendarId=calendar_id,
+                                   timeZone="Asia/Beirut").execute()
+    events = result['items']
+    return render(request, 'calendar_player.html', {'events': events})
+
+
+def playbook(request):
+    images = CanvasImage.objects.all()
+    return render(request, 'playbook.html', {'images': images})
+
+
+def pricing(request):
+    return render(request, 'pricing.html')
+
+
+def contact(request):
+    return render(request, 'contact.html')
 
 
 def save_canvas_image(request):
@@ -110,11 +157,14 @@ def delete_canvas_image(request, image_id):
     if request.method == 'POST':
         image = get_object_or_404(CanvasImage, id=image_id)
         image.delete()
-        # return JsonResponse({"status": "success"})
         return redirect('view_images')
 
     else:
         return JsonResponse({"status": "error", "message": "Invalid request method"})
+
+
+def landing_page(request):
+    return render(request, 'index.html')
 
 
 def whiteboard(request):
@@ -140,7 +190,7 @@ def user_login(request):
     return render(request, 'login.html', {})
 
 
-@login_required
+@ login_required
 def user_logout(request):
     logout(request)
     return redirect('login')
@@ -173,12 +223,11 @@ def verify_user(request, uidb64, token):
     return redirect('login')
 
 
-@login_required
-@user_passes_test(is_player)
+@ login_required
+@ user_passes_test(is_player)
 def player_after_login(request):
 
     if request.method == 'POST':
-        print("herer")
         amount_to_pay = float(request.POST.get('amount', 0))
         print(request.POST)
         # convert amount_to_pay to decimal.Decimal
@@ -210,13 +259,12 @@ def player_after_login(request):
 
     # get payments where player is the current player
     payments = Payment.objects.filter(player=current_player)
-    announcements = Announcement.objects.all().order_by('-datetime')
 
-    return render(request, 'player_after_login.html', {'player': current_player, "payments": payments, "announcements": announcements})
+    return render(request, 'player_after_login.html', {'player': current_player, "payments": payments})
 
 
-@login_required
-@user_passes_test(is_coach)
+@ login_required
+@ user_passes_test(is_coach)
 def coach_after_login(request):
     current_coach = Coach.objects.get(profile__user=request.user)
     players = Player.objects.all()
@@ -224,8 +272,8 @@ def coach_after_login(request):
     return render(request, 'coach_after_login.html', {'coach': current_coach, 'players': players})
 
 
-@login_required
-@user_passes_test(not_player)
+@ login_required
+@ user_passes_test(not_player)
 def announcements(request):
 
     if request.method == "POST":
@@ -236,6 +284,18 @@ def announcements(request):
     announcements = Announcement.objects.all().order_by('-datetime')
 
     return render(request, 'announcements.html', {'announcements': announcements})
+
+
+@ login_required
+@ user_passes_test(not_player)
+def delete_announcement(request, announcement_id):
+    announcement = get_object_or_404(Announcement, id=announcement_id)
+
+    # Check if the logged-in user is the owner of the announcement
+    if request.user == announcement.owner.user:
+        announcement.delete()
+
+    return redirect('announcements')
 
 
 @ login_required
@@ -293,8 +353,8 @@ def edit_coach_profile(request, username):
     return render(request, 'edit_profile.html', {'form': user_form})
 
 
-@login_required
-@user_passes_test(not_player)
+@ login_required
+@ user_passes_test(not_player)
 def delete_player_profile(request, username):
     player = Player.objects.get(profile__user__username=username)
     player.profile.user.delete()
@@ -313,36 +373,38 @@ def delete_coach_profile(request, username):
     return redirect('manager_after_login')
 
 
-@ login_required
-@ user_passes_test(is_manager)
+@login_required
+@user_passes_test(is_manager)
 def advance_month(request):
-    print("test")
+    if request.method == 'POST':
+        advance_amount = float(request.POST.get('advance_amount', 0))
+        advance_amount = decimal.Decimal(advance_amount)
 
-    print("test inside")
-    players = Player.objects.all()
-    for player in players:
-        player.pending_payment += 100
-        player.save()
-        latest_payment = Payment.objects.filter(
-            player=player).order_by('-date').first()
-        if latest_payment:
-            latest_date = latest_payment.date
-        else:
-            latest_date = datetime.date.today()
+        players = Player.objects.all()
+        for player in players:
+            player.pending_payment += advance_amount
+            player.save()
+            latest_payment = Payment.objects.filter(
+                player=player).order_by('-date').first()
+            if latest_payment:
+                latest_date = latest_payment.date
+            else:
+                latest_date = datetime.date.today()
 
-        payment_date = latest_date.replace(
-            day=1) + datetime.timedelta(days=31)
-        payment_date = payment_date.replace(day=1)
-        payment = Payment(player=player, amount=100, date=payment_date)
-        payment.save()
-        return redirect('manager_after_login')
+            payment_date = latest_date.replace(
+                day=1) + datetime.timedelta(days=31)
+            payment_date = payment_date.replace(day=1)
+            payment = Payment(
+                player=player, amount=advance_amount, date=payment_date)
+            payment.save()
+
+    return redirect('manager_after_login')
 
 
 @ login_required
 @ user_passes_test(is_player)
 def make_payment(request):
     if request.method == 'POST':
-        print("herer")
         amount_to_pay = float(request.POST.get('amount', 0))
         user = request.user
         player = Player.objects.get(profile__user=user)
@@ -352,6 +414,7 @@ def make_payment(request):
             if amount_to_pay >= payment.amount:
                 amount_to_pay -= payment.amount
                 payment.amount = 0
+
             else:
                 payment.amount -= amount_to_pay
                 amount_to_pay = 0
@@ -363,8 +426,10 @@ def make_payment(request):
 
         if amount_to_pay > 0:
             create_notification(player.profile, player.profile, "Payment of " +
-                                str(amount_to_pay) + " made by" + player.profile.user.username +
+                                str(amount_to_pay) + " made by  " + player.profile.user.username +
                                 " on " + str(datetime.date.today()))
+        if amount_to_pay < 0:
+            print("Amount to pay is negative")
 
         payment.save()
     return redirect('player_after_login')

@@ -1,4 +1,5 @@
-{% extends 'base.html' %} {% block content %}
+{% extends 'base.html' %} {% block content %}{%load auth_extras%}
+
 <main class="d-flex w-100">
   <div class="container d-flex flex-column">
     <div class="row">
@@ -117,40 +118,42 @@
               </div>
             </div>
           </div>
-
-          <div class="card">
-            <div class="card-body">
-              {%for payment in payments%}
-              <div class="m-sm-4">
-                <label class="form-label">Amount</label>
-                <input
-                  class="form-control"
-                  type="text"
-                  placeholder="${{payment.amount}}"
-                  readonly
-                />
-                <label class="form-label">Date</label>
-                <input
-                  class="form-control"
-                  type="text"
-                  placeholder="{{payment.date}}"
-                  readonly
-                />
+          <div>
+            <div class="card">
+              {% if request.user|has_group:"Manager" %}
+              <div class="card-body">
+                {%for payment in payments%}
+                <div class="m-sm-4">
+                  <label class="form-label">Amount</label>
+                  <input
+                    class="form-control"
+                    type="text"
+                    placeholder="${{payment.amount}}"
+                    readonly
+                  />
+                  <label class="form-label">Date</label>
+                  <input
+                    class="form-control"
+                    type="text"
+                    placeholder="{{payment.date}}"
+                    readonly
+                  />
+                </div>
+                {%endfor%}
               </div>
-              {%endfor%}
             </div>
-          </div>
-
-          <div class="card">
-            <div class="card-body">
-              <div class="m-sm-4">
-                <label class="form-label">Amount due</label>
-                <input
-                  class="form-control"
-                  type="text"
-                  placeholder="${{player.pending_payment}}"
-                  readonly
-                />
+            <div class="card">
+              <div class="card-body">
+                <div class="m-sm-4">
+                  <label class="form-label">Amount due</label>
+                  <input
+                    class="form-control"
+                    type="number"
+                    placeholder="${{player.pending_payment}}"
+                    readonly
+                  />
+                </div>
+                {% endif %}
               </div>
             </div>
           </div>
