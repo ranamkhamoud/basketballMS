@@ -45,6 +45,9 @@ venv\Scripts\activate # For Windows
 
 3. Install the required packages:
 ```
+pip install django
+```
+```
 pip install -r requirements.txt
 ```
 
