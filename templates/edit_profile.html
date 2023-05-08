@@ -13,7 +13,7 @@
           <div class="card">
             <div class="card-body">
               <div class="m-sm-4">
-                <form method="post">
+                <form method="post" action="{{ request.path }}">
                   {% csrf_token %}
 
                   <div class="mb-3">
@@ -81,34 +81,33 @@
                     {{ form.email.errors }}
                   </div>
 
+
+                  {% if request.user|has_group:"Players" %}
+
                   <div class="mb-3">
-                    <label
-                      class="form-label"
-                      for="{{ player_form.position.id_for_label }}"
-                      >Position</label
-                    >
-                    <select
-                      class="form-select mb-3"
-                      name="{{ player_form.position.name }}"
-                      id="{{ player_form.position.auto_id }}"
-                    >
-                      {% for position in player_form.position %}
-                      <option
-                        value="{{ position.data.value }}"
-                        {%
-                        if
-                        position.data.selected
-                        %}selected{%
-                        endif
-                        %}
-                      >
-                        {{ position.choice_label }}
-                      </option>
-                      {% endfor %}
+                    <label class="form-label" for="{{ player_form.position.id_for_label }}">Position</label>
+                    <select class="form-select mb-3" name="{{ player_form.position.name }}" id="{{ player_form.position.auto_id }}">
+                        {% for position in player_form.position %}
+                            <option value="{{ position.data.value }}" {% if position.data.selected %}selected{% endif %}>{{ position.choice_label }}</option>
+                        {% endfor %}
                     </select>
                     {{ player_form.position.errors }}
-                  </div>
+                </div>
+                <div class="mb-3">
 
+                <label class="form-label">Discount</label>
+                  <input
+                    class="form-control form-control-lg"
+                    type="number"
+                    name="discount"
+                    placeholder="Enter discount percentage"
+                    min="0"
+                    max="{{player.pending_payment}}"
+                    step="0.1"
+                    required
+                  />
+                </div>
+{%else%}
                   <div class="text-center mt-3">
                     <button type="submit" class="btn btn-lg btn-primary">
                       Save
@@ -119,8 +118,9 @@
             </div>
           </div>
           <div>
+            {%endif%}
             <div class="card">
-              {% if request.user|has_group:"Manager" %}
+              {% if request.user|has_group:"Managers" %}
               <div class="card-body">
                 {%for payment in payments%}
                 <div class="m-sm-4">
@@ -145,6 +145,8 @@
             <div class="card">
               <div class="card-body">
                 <div class="m-sm-4">
+                  {% if request.user|has_group:"Players" %}
+
                   <label class="form-label">Amount due</label>
                   <input
                     class="form-control"
@@ -153,6 +155,7 @@
                     readonly
                   />
                 </div>
+                {%endif%}
                 {% endif %}
               </div>
             </div>

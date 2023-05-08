@@ -55,7 +55,13 @@
                   </div>
                   <div class="mb-3">
                     <label class="form-label">Date of birth</label>
-                    <input class="form-control form-control-lg" type="date" name="{{ profile_form.date_of_birth.name }}" value="{{ profile_form.date_of_birth.value|default:'' }}" />
+                    <input class="form-control form-control-lg" type="date" name="{{ profile_form.date_of_birth.name }}" value="{{ profile_form.date_of_birth.value|default:'' }}" min="1900-01-01" id="dateOfBirth" />
+                    {% if profile_form.date_of_birth.errors %}
+                        <div class="error-message">
+                            {{ profile_form.date_of_birth.errors|join:", " }}
+                        </div>
+                    {% endif %}
+                    
                   </div>
                   <div class="mb-3">
                     <label class="form-label">Role*</label>

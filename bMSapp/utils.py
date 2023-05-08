@@ -13,14 +13,15 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
 from django.utils.encoding import force_bytes
-from django.template.loader import render_to_string
-from django import template
 
 
+# this function helps creating notifications for the manager and is used in  views.py
 def create_notification(owner, user, message):
     notification = Notification.objects.create(
         owner=owner, profile=user, message=message)
     notification.save()
+
+# this function creates profile using user form and is used in views.py
 
 
 def create_profile(request, user_form, profile_form):
@@ -39,8 +40,9 @@ def create_profile(request, user_form, profile_form):
 
     user.is_active = False
     user.save()
+    # sends activation email, after registering
     send_activation_email(request, user)
-
+# adds based on role to groups
     if role == 'P':
 
         group = Group.objects.get_or_create(name='Players')[0]
@@ -63,6 +65,8 @@ def create_profile(request, user_form, profile_form):
         manager.save()
     return user
 
+# redirects user to appropriate page based on group
+
 
 def redirect_user(user):
     if user.groups.filter(name='Players').exists():
@@ -72,17 +76,26 @@ def redirect_user(user):
     if user.groups.filter(name='Managers').exists():
         return redirect('manager_after_login')
 
+# these functions are used as decorators in views.py to limit access
+# 1. only players can access
+
 
 def is_player(user):
     return user.groups.filter(name='Players').exists()
+
+# 2. only coaches can access
 
 
 def is_coach(user):
     return user.groups.filter(name='Coaches').exists()
 
+# 3. only managers can access
+
 
 def is_manager(user):
     return user.groups.filter(name='Managers').exists()
+
+# 4. only coaches and managers can access
 
 
 def not_player(user):
@@ -90,7 +103,7 @@ def not_player(user):
 
 
 # _______EMAIL_______
-
+# EmailThread class extends threading.Thread and provides a custom implementation for sending emails
 class EmailThread(threading.Thread):
     def __init__(self, subject, content, recipient_list, sender, Images=[], connection=settings.EMAIL_CONNECTIONS["proton"]):
         self.subject = subject
@@ -100,6 +113,7 @@ class EmailThread(threading.Thread):
         self.Images = Images
         self.connection = connection
         threading.Thread.__init__(self)
+# called when thread starts
 
     def run(self):
 
@@ -113,6 +127,8 @@ def send_mail(subject, content, recipient_list, sender, Images=[], connection=se
     EmailThread(subject, content, recipient_list, sender,
                 Images=Images, connection=connection).start()
 
+# AppTokenGenerator class extends PasswordResetTokenGenerator and provides a custom implementation for generating secure tokens
+
 
 class AppTokenGenerator(PasswordResetTokenGenerator):
 
@@ -120,13 +136,16 @@ class AppTokenGenerator(PasswordResetTokenGenerator):
         return (text_type(user.is_active)+text_type(user.pk)+text_type(timestamp))
 
 
+# Create an instance of AppTokenGenerator
 token_generator = AppTokenGenerator()
+
+# uses generated token and send_mail
 
 
 def send_activation_email(request, user):
     uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
     domain = get_current_site(request).domain
-
+    # Generate activation URL with the encoded user ID and token
     link = reverse('activate', kwargs={
                    'uidb64': uidb64, 'token': token_generator.make_token(user)})
     activate_url = "http://"+domain+link
@@ -134,6 +153,6 @@ def send_activation_email(request, user):
     email_recipient = user.email
     email_body = 'Hi '+user.first_name + \
         "\nPlease use this link to verify your account\n"+activate_url
-
+    # Call send_mail function to send the email with the activation link
     send_mail(email_subject, email_body, sender=settings.EMAIL_HOST_USER,
               recipient_list=[email_recipient])

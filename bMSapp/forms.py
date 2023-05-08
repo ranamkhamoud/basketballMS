@@ -3,6 +3,9 @@ from .models import Player, Coach, Manager
 from django.contrib.auth.forms import UserCreationForm
 from .models import Profile
 from django.contrib.auth.models import User
+from django.core.validators import MinValueValidator, MaxValueValidator
+from datetime import date, timedelta
+
 
 
 class UserForm(UserCreationForm):
@@ -42,8 +45,15 @@ class ProfileForm(forms.ModelForm):
                              required=True, initial='P', help_text='Required.')
 
     phone_number = forms.CharField(max_length=20)
+
     date_of_birth = forms.DateField(
-        widget=forms.DateInput(attrs={'type': 'date'}))
+        widget=forms.DateInput(attrs={'type': 'date'}),
+        validators=[
+            MinValueValidator(date(1925, 1, 1),message="DOB must be after 1925-01-01"),
+            MaxValueValidator(date(2008, 1, 1),message="You must be at least 15 years old"),
+        ],help_text='Must be older than 15 years old')
+
+
 
     class Meta:
         model = Profile
@@ -60,7 +70,7 @@ class UserEditForm(forms.ModelForm):
 class PlayerEditForm(forms.ModelForm):
     class Meta:
         model = Player
-        exclude = ["profile"]
+        exclude = ["profile",'pending_payment']
 
 
 class CoachForm(forms.ModelForm):
