@@ -1,4 +1,4 @@
-{% extends 'base.html' %} {% block content %} {% load static %}
+{% extends 'base.html' %} {% block content %} {% load static %}{%load auth_extras%}
 <link rel="stylesheet" href="{% static 'css/gallery.css' %}" />
 
 <div class="container">
@@ -22,14 +22,18 @@
             <p class="card-text">
             Uploaded on {{ image.created_at|date:"F j, Y, P" }}
           </p>
-         
+          {% if request.user|has_group:"Coaches" %} 
             <form
               action="{% url 'delete_canvas_image' image.id %}"
               method="POST"
             >
-        
+            {%csrf_token%}
+
               <button type="submit" class="btn btn-danger">Delete</button>
             </form>
+            {%else%}
+            <p class="card-text">
+              {%endif%}
           </div>
         </div>
       </div>

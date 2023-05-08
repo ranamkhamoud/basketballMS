@@ -30,11 +30,12 @@ from .utils import *
 # load .env file
 load_dotenv()
 
+# this functions using calendar id delete event from google calendar
+
 
 def delete_event(request, event_id):
     calendar_id = "88fe0d3e9ce1b2cc965deeb2b3ef2f70ab036e0e2f9267dddf548d09ac391135@group.calendar.google.com"
     service = get_service()
-
     try:
         service.events().delete(calendarId=calendar_id, eventId=event_id).execute()
         messages.success(request, "Event deleted successfully.")
@@ -43,6 +44,8 @@ def delete_event(request, event_id):
             request, "Failed to delete the event. Error: {}".format(e))
 
     return redirect('calendar')
+
+# this function was used to authenticate google calendar, but now it is not used. Replace json file, and token
 
 
 def authenticate_google(request):
@@ -54,10 +57,28 @@ def authenticate_google(request):
 
     return redirect('get_calendars')
 
+# this function gets all events from google calendar
+
 
 def get_service():
     credentials = pickle.load(open(settings.GOOGLE_API_TOKEN_FILE, "rb"))
     return build("calendar", "v3", credentials=credentials)
+
+# this function checks events overlap by checking if there is an event between start and end time
+
+
+def check_event_overlap(service, calendar_id, start_time, end_time):
+    result = service.events().list(
+        calendarId=calendar_id,
+        timeMin=start_time.isoformat(),
+        timeMax=end_time.isoformat(),
+        singleEvents=True,
+        orderBy='startTime'
+    ).execute()
+
+    return bool(result.get('items', []))
+
+# this function creates event in google calendar, checks if there is an event during this time and if not creates event
 
 
 def calendar(request):
@@ -75,17 +96,7 @@ def calendar(request):
             start_time = event_data['start_time']
             end_time = start_time + timedelta(hours=event_data['duration'])
             timezone = 'Asia/Beirut'
-
-            freebusy_request = {
-                "timeMin": start_time.isoformat(),
-                "timeMax": end_time.isoformat(),
-                "timeZone": timezone,
-                "items": [{"id": calendar_id}]
-            }
-
-            freebusy_result = service.freebusy().query(body=freebusy_request).execute()
-
-            if freebusy_result['calendars'][calendar_id]['busy']:
+            if check_event_overlap(service, calendar_id, start_time, end_time):
                 messages.error(
                     request, "There is already an event during this time.")
             else:
@@ -98,10 +109,7 @@ def calendar(request):
                 }
                 service.events().insert(calendarId=calendar_id, body=event).execute()
 
-            return redirect('calendar')
-
-        else:
-            print("Form is not valid")
+                return redirect('calendar')
 
     else:
         form = EventForm()
@@ -113,11 +121,15 @@ def view_images(request):
     images = CanvasImage.objects.all()
     return render(request, 'view_images.html', {'images': images})
 
+# the following 3 functions limits player access to calendar,playbook and announcements
+# 1
+
 
 def announcements_player(request):
     announcements = Announcement.objects.all().order_by('-datetime')
 
     return render(request, 'announcements_player.html', {'announcements': announcements})
+# 2
 
 
 def calendar_player(request):
@@ -127,6 +139,8 @@ def calendar_player(request):
                                    timeZone="Asia/Beirut").execute()
     events = result['items']
     return render(request, 'calendar_player.html', {'events': events})
+
+# 3
 
 
 def playbook(request):
@@ -141,6 +155,8 @@ def pricing(request):
 def contact(request):
     return render(request, 'contact.html')
 
+# this function allows user to save an image from the canvas (limited to coach)
+
 
 def save_canvas_image(request):
     if request.method == 'POST':
@@ -151,6 +167,8 @@ def save_canvas_image(request):
         return JsonResponse({'status': 'success', 'message': 'Image saved.', 'image_id': canvas_image.id})
     else:
         return JsonResponse({'status': 'error', 'message': 'Invalid request method.'})
+
+# this function allows user to delete an image from the canvas (limited to coach) using the image id
 
 
 def delete_canvas_image(request, image_id):
@@ -174,6 +192,8 @@ def whiteboard(request):
 def basketball_whiteboard(request):
     return render(request, 'basketball_whiteboard.html')
 
+# this function allows user to login using his username and password
+
 
 def user_login(request):
     if request.method == 'POST':
@@ -189,11 +209,15 @@ def user_login(request):
 
     return render(request, 'login.html', {})
 
+# tthis function logs out the user
+
 
 @ login_required
 def user_logout(request):
     logout(request)
     return redirect('login')
+
+# this functions registers the user and creates a profile for him
 
 
 def register(request):
@@ -212,6 +236,8 @@ def register(request):
 
     return render(request, 'register.html', {'user_form': user_form, 'profile_form': profile_form})
 
+# this function is used to verify the user after registration via email using the link sent to the user's email
+
 
 def verify_user(request, uidb64, token):
     id = force_str(urlsafe_base64_decode(uidb64))
@@ -222,11 +248,12 @@ def verify_user(request, uidb64, token):
     user.user.save()
     return redirect('login')
 
+# this function is used to redirect the player to the correct page after login, where he/she can pay the amount due and view profile
+
 
 @ login_required
 @ user_passes_test(is_player)
 def player_after_login(request):
-
     if request.method == 'POST':
         amount_to_pay = float(request.POST.get('amount', 0))
         print(request.POST)
@@ -262,6 +289,8 @@ def player_after_login(request):
 
     return render(request, 'player_after_login.html', {'player': current_player, "payments": payments})
 
+# redirects the coach to the correct page after login
+
 
 @ login_required
 @ user_passes_test(is_coach)
@@ -270,6 +299,8 @@ def coach_after_login(request):
     players = Player.objects.all()
 
     return render(request, 'coach_after_login.html', {'coach': current_coach, 'players': players})
+
+# this function is used to create an announcement and save it in the database (only limited to the coach and manager)
 
 
 @ login_required
@@ -285,17 +316,20 @@ def announcements(request):
 
     return render(request, 'announcements.html', {'announcements': announcements})
 
+# this function deletes the announcement only limited to the owner of the announcement
+
 
 @ login_required
 @ user_passes_test(not_player)
 def delete_announcement(request, announcement_id):
     announcement = get_object_or_404(Announcement, id=announcement_id)
-
     # Check if the logged-in user is the owner of the announcement
     if request.user == announcement.owner.user:
         announcement.delete()
 
     return redirect('announcements')
+
+# this function redirects to manager page after login, and displays all the players, coaches, notifications and payments
 
 
 @ login_required
@@ -322,12 +356,18 @@ def manager_after_login(request):
 
     return render(request, 'manager_after_login.html', {'manager': current_manager, 'players': all_players, 'coaches': all_coaches, 'notifications': all_notifications, 'payments': all_payments})
 
+# this function allows coach to edit profile and set player position and manager to edit profile and set discount amount
+
 
 @ login_required
 @ user_passes_test(not_player)
 def edit_player_profile(request, username):
+    # Get the discount from the form
+    discount = decimal.Decimal(request.POST.get('discount', 0))
     player = Player.objects.get(profile__user__username=username)
     payments = Payment.objects.filter(player=player)
+    player.pending_payment -= discount
+    player.save()
     player_form = PlayerEditForm(instance=player)
     user_form = UserEditForm(instance=player.profile.user)
     if request.method == 'POST':
@@ -338,6 +378,8 @@ def edit_player_profile(request, username):
             user_form.save()
             return redirect_user(request.user)
     return render(request, 'edit_profile.html', {'player_form': player_form, 'form': user_form, 'player': player, 'payments': payments})
+
+# this function allows manager to edit coach profile
 
 
 @ login_required
@@ -352,6 +394,8 @@ def edit_coach_profile(request, username):
             return redirect_user(request.user)
     return render(request, 'edit_profile.html', {'form': user_form})
 
+# this function allows manager and coach to delete player profile
+
 
 @ login_required
 @ user_passes_test(not_player)
@@ -363,6 +407,8 @@ def delete_player_profile(request, username):
         return redirect('_after_login')
     return redirect('manager_after_login')
 
+# this function allows manager to delete coach profile
+
 
 @ login_required
 @ user_passes_test(is_manager)
@@ -371,6 +417,8 @@ def delete_coach_profile(request, username):
     coach.profile.user.delete()
     coach.delete()
     return redirect('manager_after_login')
+
+# this function allows manager to advance month and set a payment fee for the next month
 
 
 @login_required
@@ -400,11 +448,14 @@ def advance_month(request):
 
     return redirect('manager_after_login')
 
+# this function allows player to make payment
+
 
 @ login_required
 @ user_passes_test(is_player)
 def make_payment(request):
     if request.method == 'POST':
+        payment_history = []
         amount_to_pay = float(request.POST.get('amount', 0))
         user = request.user
         player = Player.objects.get(profile__user=user)
@@ -414,7 +465,6 @@ def make_payment(request):
             if amount_to_pay >= payment.amount:
                 amount_to_pay -= payment.amount
                 payment.amount = 0
-
             else:
                 payment.amount -= amount_to_pay
                 amount_to_pay = 0
@@ -423,6 +473,7 @@ def make_payment(request):
                 break
         player.pending_payment = sum(payment.amount for payment in payments)
         player.save()
+        print(payment_history)
 
         if amount_to_pay > 0:
             create_notification(player.profile, player.profile, "Payment of " +
