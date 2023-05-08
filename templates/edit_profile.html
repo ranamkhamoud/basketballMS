@@ -82,7 +82,7 @@
                   </div>
 
 
-                  {% if request.user|has_group:"Players" %}
+                  {% if request.user|has_group:"Coaches" %}
 
                   <div class="mb-3">
                     <label class="form-label" for="{{ player_form.position.id_for_label }}">Position</label>
@@ -93,6 +93,17 @@
                     </select>
                     {{ player_form.position.errors }}
                 </div>
+                <div class="text-center mt-3">
+                  <button type="submit" class="btn btn-lg btn-primary">
+                    Save
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+                {%else%}
+
                 <div class="mb-3">
 
                 <label class="form-label">Discount</label>
@@ -107,7 +118,6 @@
                     required
                   />
                 </div>
-{%else%}
                   <div class="text-center mt-3">
                     <button type="submit" class="btn btn-lg btn-primary">
                       Save
@@ -145,7 +155,7 @@
             <div class="card">
               <div class="card-body">
                 <div class="m-sm-4">
-                  {% if request.user|has_group:"Players" %}
+                  {% if request.user|has_group:"Managers" %}
 
                   <label class="form-label">Amount due</label>
                   <input
